@@ -52,7 +52,6 @@ export const SHOWS: Show[] = [
     tags: ["Trees", "Jumping", "Active", "Outdoors"],
     description:
       "Watch agile jumpers navigate the canopy and leap from branch to branch. Fast moves, rustling leaves, and endless curiosity.",
-    isLive: true,
   },
   {
     id: "wild-yard",
@@ -74,7 +73,8 @@ export const SHOWS: Show[] = [
     trailer: "/videos/tv-show-trailer-frost-runner.mp4",
     tags: ["Snow", "Sprint", "Active", "Winter"],
     description:
-      "A snow-white stoat dashes across fresh powder, kicking up glittering snow at full sprint. Quick darts and sudden stops.",
+      "A high-speed chase through an icy wonderland. Follow the elusive snow hare as it darts between frost-covered pines. Perfect for stimulating active feline hunting instincts.",
+    isLive: true,
   },
   {
     id: "grasshopper-leap",
@@ -108,6 +108,7 @@ export const SHOWS: Show[] = [
     tags: ["Rocks", "Darting", "Reptile", "Sunny"],
     description:
       "A vivid green lizard suns on a warm rock then darts away in a flash. Sudden scampers built to trigger the pounce.",
+    isLive: true,
   },
 ]
 
@@ -115,7 +116,17 @@ export const SHOWS_BY_ID: Record<string, Show> = Object.fromEntries(
   SHOWS.map((show) => [show.id, show])
 )
 
-export const FEATURED_SHOW = SHOWS_BY_ID["branch-bounder"]
+export const FEATURED_SHOW = SHOWS_BY_ID["frost-runner"]
+
+/**
+ * "More Shows for Kitty" featured layout: the first id renders as the large
+ * card, the rest stack beside it. Ordered to match the homepage mock.
+ */
+export const FEATURED_GRID_IDS: string[] = [
+  "wild-yard",
+  "branch-bounder",
+  "lizard-scamper",
+]
 
 /** Mockup grid uses 8 tiles; fill the layout by reusing assets after the unique six. */
 export const GRID_SHOW_IDS: string[] = [
@@ -135,9 +146,9 @@ export interface QueueEntry {
 }
 
 export const INITIAL_QUEUE: QueueEntry[] = [
-  { key: "q1", showId: "frost-runner" },
+  { key: "q1", showId: "lizard-scamper" },
   { key: "q2", showId: "grasshopper-leap" },
-  { key: "q3", showId: "lizard-scamper" },
+  { key: "q3", showId: "squirrel-chase" },
 ]
 
 export interface FilterOption {

@@ -34,7 +34,7 @@ type PlayerAction =
   | { type: "next" }
 
 const initialState: PlayerState = {
-  isPlaying: true,
+  isPlaying: false,
   autoPlay: true,
   napTimer: "30 min",
   activeFilter: "all",

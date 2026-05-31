@@ -1,15 +1,21 @@
 "use client"
 
-import { CalendarPlus, Pause, Play } from "lucide-react"
+import { Pause, Play, Plus } from "lucide-react"
 
 import { cn } from "@/lib/utils"
-import { FEATURED_SHOW } from "@/lib/shows"
+import { CATEGORY_META, FEATURED_SHOW } from "@/lib/shows"
 import { usePlayer } from "@/components/catcup/player-provider"
-import { CategoryBadge } from "@/components/catcup/category-badge"
+import { HeroUpNext } from "@/components/catcup/hero-up-next"
 import { TrailerMedia } from "@/components/catcup/trailer-media"
 
+/**
+ * Full-bleed cinematic hero for the featured show. The trailer plays behind a
+ * directional scrim while the title, status badges, and primary actions sit on
+ * the lower-left, matching the homepage mock. A floating `HeroUpNext` card
+ * previews the next queued show.
+ */
 export function Hero() {
-  const { nowPlayingId, isPlaying, dispatch } = usePlayer()
+  const { dispatch, isPlaying, nowPlayingId } = usePlayer()
   const show = FEATURED_SHOW
   const isActive = nowPlayingId === show.id && isPlaying
 
@@ -22,63 +28,67 @@ export function Hero() {
   }
 
   return (
-    <section className="grid overflow-hidden rounded-card border border-hairline bg-surface-low/60 lg:grid-cols-[1.6fr_1fr]">
-      <div className="relative aspect-video lg:aspect-auto">
-        <TrailerMedia
-          show={show}
-          active={isActive}
-          previewOnHover={false}
-          priority
-          sizes="(max-width: 1024px) 100vw, 55vw"
-          className="absolute inset-0 size-full"
-        />
-        {show.isLive ? (
-          <span className="absolute top-4 left-4 inline-flex items-center gap-1.5 rounded-full bg-black/55 px-2.5 py-1 text-label-bold text-foreground backdrop-blur-md">
-            <span className="size-2 animate-pulse rounded-full bg-lime" />
-            Live
-          </span>
-        ) : null}
-      </div>
+    <section className="relative -mt-16 min-h-[82svh] w-full overflow-hidden">
+      <TrailerMedia
+        active={isActive}
+        className="absolute inset-0 size-full"
+        previewOnHover={false}
+        priority
+        show={show}
+        sizes="100vw"
+      />
 
-      <div className="flex flex-col justify-center gap-4 p-6 lg:p-7">
-        <CategoryBadge category={show.category} className="self-start" />
-        <h2 className="text-headline-lg text-foreground">{show.title}</h2>
-        <p className="text-body-sm text-muted-foreground">{show.description}</p>
+      <div className="absolute inset-0 bg-linear-to-r from-background via-background/55 to-transparent" />
+      <div className="absolute inset-0 bg-linear-to-t from-background via-background/30 to-transparent" />
 
-        <div className="flex flex-wrap gap-2">
-          {show.tags.map((tag) => (
-            <span
-              key={tag}
-              className="rounded-md border border-hairline bg-surface-container px-2.5 py-1 text-xs font-medium text-muted-foreground"
-            >
-              {tag}
+      <div className="relative flex min-h-[82svh] flex-col justify-end px-4 pt-24 pb-10 sm:px-6 lg:px-10 lg:pb-14">
+        <div className="flex flex-col items-start gap-4 lg:max-w-xl">
+          <div className="flex flex-wrap items-center gap-2">
+            {show.isLive ? (
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-lime px-2.5 py-1 text-label-bold text-on-lime">
+                <span className="size-1.5 animate-pulse rounded-full bg-on-lime" />
+                Live
+              </span>
+            ) : null}
+            <span className="inline-flex items-center rounded-md bg-black/40 px-2.5 py-1 text-label-bold text-foreground backdrop-blur-md">
+              {CATEGORY_META[show.category].label}
             </span>
-          ))}
+          </div>
+
+          <h1 className="text-display-lg text-foreground">{show.title}</h1>
+
+          <p className="max-w-md text-body-sm text-muted-foreground">
+            {show.description}
+          </p>
+
+          <div className="mt-2 flex flex-wrap items-center gap-3">
+            <button
+              className={cn(
+                "inline-flex items-center justify-center gap-2 rounded-lg bg-blue px-5 py-3 text-body-sm font-semibold text-on-blue transition-colors hover:bg-blue/85 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-soft"
+              )}
+              onClick={handlePlay}
+              type="button"
+            >
+              {isActive ? (
+                <Pause className="size-4 fill-current" />
+              ) : (
+                <Play className="size-4 fill-current" />
+              )}
+              {isActive ? "Pause" : "Play Now"}
+            </button>
+            <button
+              className="inline-flex items-center justify-center gap-2 rounded-lg border border-outline-variant bg-surface/40 px-5 py-3 text-body-sm font-semibold text-foreground backdrop-blur-md transition-colors hover:bg-surface-container focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue"
+              onClick={() => dispatch({ type: "enqueue", showId: show.id })}
+              type="button"
+            >
+              <Plus className="size-4" />
+              Queue
+            </button>
+          </div>
         </div>
 
-        <div className="mt-1 flex flex-col gap-2.5">
-          <button
-            type="button"
-            onClick={handlePlay}
-            className={cn(
-              "inline-flex items-center justify-center gap-2 rounded-lg bg-blue px-4 py-3 text-body-sm font-semibold text-on-blue transition-colors hover:bg-blue/85"
-            )}
-          >
-            {isActive ? (
-              <Pause className="size-4 fill-current" />
-            ) : (
-              <Play className="size-4 fill-current" />
-            )}
-            {isActive ? "Pause" : "Play Now"}
-          </button>
-          <button
-            type="button"
-            onClick={() => dispatch({ type: "enqueue", showId: show.id })}
-            className="inline-flex items-center justify-center gap-2 rounded-lg border border-outline-variant bg-transparent px-4 py-3 text-body-sm font-semibold text-foreground transition-colors hover:bg-surface-container"
-          >
-            <CalendarPlus className="size-4" />
-            Add to Routine
-          </button>
+        <div className="mt-6 w-full max-w-sm lg:absolute lg:right-10 lg:bottom-1/2 lg:mt-0 lg:w-[320px] lg:translate-y-1/2">
+          <HeroUpNext />
         </div>
       </div>
     </section>

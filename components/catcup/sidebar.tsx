@@ -52,8 +52,8 @@ export function Sidebar() {
           <Cat className="size-5 text-lime" strokeWidth={2.25} />
         </span>
         <span className="min-w-0 flex-1">
-          <span className="block truncate text-body-sm font-semibold text-foreground">
-            Milo
+          <span className="text-body-sm block truncate font-semibold text-foreground">
+            Kitty
           </span>
           <span className="block truncate text-xs text-muted-foreground">
             Curious Explorer
@@ -64,19 +64,18 @@ export function Sidebar() {
 
       <nav className="flex flex-1 flex-col gap-1">
         {NAV_ITEMS.map((item) => {
-          const isActive = item.filter
-            ? activeFilter === item.filter
-            : false
+          const isActive = item.filter ? activeFilter === item.filter : false
           return (
             <button
               key={item.id}
               type="button"
               onClick={() =>
-                item.filter && dispatch({ type: "setFilter", value: item.filter })
+                item.filter &&
+                dispatch({ type: "setFilter", value: item.filter })
               }
               aria-current={isActive ? "page" : undefined}
               className={cn(
-                "group flex items-center gap-3 rounded-xl px-3 py-2.5 text-body-sm font-semibold transition-colors",
+                "group text-body-sm flex items-center gap-3 rounded-xl px-3 py-2.5 font-semibold transition-colors",
                 isActive
                   ? "bg-blue text-on-blue shadow-[0_8px_20px_-10px_var(--color-blue)]"
                   : "text-muted-foreground hover:bg-surface-container hover:text-foreground"
