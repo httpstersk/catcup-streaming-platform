@@ -1,6 +1,6 @@
 "use client"
 
-import { motion } from "motion/react"
+import * as m from "motion/react-m"
 import { Play, Plus } from "@phosphor-icons/react"
 
 import { cn } from "@/lib/utils"
@@ -33,7 +33,7 @@ export function ShowCard({
   const dispatch = usePlayerDispatch()
 
   return (
-    <motion.div
+    <m.div
       animate="show"
       className={cn(
         "group relative block overflow-hidden rounded-card border border-hairline bg-surface-low text-left",
@@ -92,10 +92,7 @@ export function ShowCard({
       <button
         aria-label={`Add ${show.title} to queue`}
         className="absolute top-3 right-3 z-10 grid size-8 place-items-center rounded-full bg-black/45 text-foreground opacity-0 backdrop-blur-md transition-opacity duration-200 hover:bg-black/65 focus-visible:opacity-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue group-hover:opacity-100 group-focus-within:opacity-100"
-        onClick={(e) => {
-          e.stopPropagation()
-          dispatch({ type: "enqueue", showId: show.id })
-        }}
+        onClick={() => dispatch({ type: "enqueue", showId: show.id })}
         type="button"
       >
         <Plus className="size-4" />
@@ -119,6 +116,6 @@ export function ShowCard({
           </p>
         ) : null}
       </div>
-    </motion.div>
+    </m.div>
   )
 }

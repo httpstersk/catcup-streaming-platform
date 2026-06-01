@@ -225,18 +225,6 @@ export const FEATURED_GRID_IDS: string[] = [
   "lizard-scamper",
 ]
 
-/** Mockup grid uses 8 tiles; fill the layout by reusing assets after the unique six. */
-export const GRID_SHOW_IDS: string[] = [
-  "wild-yard",
-  "branch-bounder",
-  "frost-runner",
-  "grasshopper-leap",
-  "squirrel-chase",
-  "lizard-scamper",
-  "frost-runner",
-  "grasshopper-leap",
-]
-
 export interface QueueEntry {
   key: string
   showId: string
@@ -247,21 +235,6 @@ export const INITIAL_QUEUE: QueueEntry[] = [
   { key: "q2", showId: "grasshopper-leap" },
   { key: "q3", showId: "squirrel-chase" },
 ]
-
-export interface FilterOption {
-  id: string
-  label: string
-}
-
-export const FILTERS: FilterOption[] = [
-  { id: "all", label: "All Shows" },
-  { id: "birds", label: "Birds" },
-  { id: "bugs", label: "Bugs" },
-  { id: "chase", label: "Chase" },
-  { id: "calm", label: "Calm" },
-]
-
-export const NAP_TIMER_OPTIONS = ["15 min", "30 min", "45 min", "60 min", "Off"]
 
 export function durationToSeconds(duration: string): number {
   const [m, s] = duration.split(":").map(Number)

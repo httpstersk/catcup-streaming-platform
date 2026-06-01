@@ -3,6 +3,7 @@
 import * as React from "react"
 import Image from "next/image"
 
+import { EMPTY_CAPTIONS_SRC } from "@/lib/site-metadata"
 import { cn } from "@/lib/utils"
 import { Show } from "@/lib/shows"
 
@@ -71,19 +72,22 @@ export function TrailerMedia({
         className={cn("object-cover", imageClassName)}
       />
       <video
-        ref={videoRef}
+        aria-label={`Preview: ${show.title}`}
         autoPlay={autoplay}
-        src={shouldLoad ? show.preview : undefined}
-        poster={show.blurDataURL}
-        muted
-        loop
-        playsInline
-        preload={autoplay ? "auto" : "none"}
         className={cn(
           "absolute top-1/2 left-1/2 min-h-full min-w-full -translate-x-1/2 -translate-y-1/2 object-cover transition-opacity duration-500",
           shouldPlay ? "opacity-100" : "opacity-0"
         )}
-      />
+        loop
+        muted
+        playsInline
+        poster={show.blurDataURL}
+        preload={autoplay ? "auto" : "none"}
+        ref={videoRef}
+        src={shouldLoad ? show.preview : undefined}
+      >
+        <track default kind="captions" label="Captions" src={EMPTY_CAPTIONS_SRC} srcLang="en" />
+      </video>
     </div>
   )
 }

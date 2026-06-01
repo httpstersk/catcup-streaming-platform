@@ -1,5 +1,8 @@
 import type { Transition, Variants } from "motion/react"
 
+/** Delay in seconds between consecutive children when a grid or list animates in. */
+const STAGGER_CHILDREN = 0.04
+
 /**
  * Fade-and-rise variant for cards and list items entering or leaving a layout.
  * Pair with {@link springSoft} for a settled, premium feel.
@@ -52,9 +55,3 @@ export const springSoft: Transition = {
   stiffness: 260,
   type: "spring",
 }
-
-/**
- * Delay in seconds between consecutive children when a grid or list animates in,
- * producing a subtle staggered reveal.
- */
-export const STAGGER_CHILDREN = 0.04

@@ -1,7 +1,8 @@
 "use client"
 
 import * as React from "react"
-import { AnimatePresence, motion } from "motion/react"
+import { AnimatePresence } from "motion/react"
+import * as m from "motion/react-m"
 import {
   CircleNotch,
   Pause,
@@ -12,10 +13,14 @@ import {
   X,
 } from "@phosphor-icons/react"
 
-import { cn } from "@/lib/utils"
-import { overlayFade, springSoft } from "@/lib/motion"
-import { secondsToLabel, SHOWS_BY_ID } from "@/lib/shows"
 import { usePlayer } from "@/components/catcup/player-provider"
+import { overlayFade, springSoft } from "@/lib/motion"
+import { EMPTY_CAPTIONS_SRC } from "@/lib/site-metadata"
+import { secondsToLabel, SHOWS_BY_ID } from "@/lib/shows"
+import { cn } from "@/lib/utils"
+
+/** Inactivity delay before hiding fullscreen controls (ms). */
+const CONTROLS_HIDE_DELAY_MS = 2500
 
 /**
  * Props for the CloseButton component.
@@ -52,15 +57,69 @@ interface ControlsProps {
 }
 
 /**
+ * Local UI state for the fullscreen overlay (timeline, buffering, chrome).
+ */
+interface FullscreenUiState {
+  currentTime: number
+  duration: number
+  isBuffering: boolean
+  isMuted: boolean
+  showControls: boolean
+}
+
+/** Actions for {@link fullscreenUiReducer}. */
+type FullscreenUiAction =
+  | { type: "setBuffering"; value: boolean }
+  | { type: "setCurrentTime"; value: number }
+  | { type: "setDuration"; value: number }
+  | { type: "setShowControls"; value: boolean }
+  | { type: "toggleMuted" }
+
+const initialFullscreenUiState: FullscreenUiState = {
+  currentTime: 0,
+  duration: 0,
+  isBuffering: false,
+  isMuted: false,
+  showControls: true,
+}
+
+/**
+ * Reducer for fullscreen player chrome and playback timeline UI.
+ *
+ * @param state - Current UI state.
+ * @param action - State mutation to apply.
+ * @returns Next UI state.
+ */
+function fullscreenUiReducer(
+  state: FullscreenUiState,
+  action: FullscreenUiAction
+): FullscreenUiState {
+  switch (action.type) {
+    case "setBuffering":
+      return { ...state, isBuffering: action.value }
+    case "setCurrentTime":
+      return { ...state, currentTime: action.value }
+    case "setDuration":
+      return { ...state, duration: action.value }
+    case "setShowControls":
+      return { ...state, showControls: action.value }
+    case "toggleMuted":
+      return { ...state, isMuted: !state.isMuted }
+    default:
+      return state
+  }
+}
+
+/**
  * Render a large, high-contrast close button for easy targeting.
  */
 function CloseButton({ onClose }: CloseButtonProps) {
   return (
     <button
-      onClick={onClose}
-      type="button"
       aria-label="Close video player"
       className="grid size-12 place-items-center rounded-full bg-black/40 text-foreground backdrop-blur-md transition-all hover:bg-black/60 hover:scale-105 active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue"
+      onClick={onClose}
+      type="button"
     >
       <X className="size-6" />
     </button>
@@ -85,40 +144,36 @@ function Controls({
   return (
     <div
       className={cn(
-        "absolute inset-0 flex flex-col justify-end p-4 md:p-6 bg-linear-to-t from-black/85 via-black/10 to-transparent transition-opacity duration-300 pointer-events-none",
+        "pointer-events-none absolute inset-0 flex flex-col justify-end bg-linear-to-t from-black/85 via-black/10 to-transparent p-4 transition-opacity duration-300 md:p-6",
         showControls ? "opacity-100" : "opacity-0"
       )}
     >
-      {/* Bottom controls panel */}
-      <div className="flex flex-col gap-2.5 w-full max-w-2xl mx-auto pointer-events-auto bg-black/55 backdrop-blur-md p-3 rounded-xl border border-hairline/30 shadow-lift mb-2 md:mb-6">
-        {/* Timeline Scrubber */}
+      <div className="pointer-events-auto mx-auto mb-2 flex w-full max-w-2xl flex-col gap-2.5 rounded-xl border border-hairline/30 bg-black/55 p-3 shadow-lift backdrop-blur-md md:mb-6">
         <div className="flex items-center gap-2.5">
           <span className="text-[10px] font-medium text-muted-foreground/80 tabular-nums select-none">
             {secondsToLabel(currentTime)}
           </span>
           <input
-            type="range"
-            min={0}
-            max={duration || 100}
-            value={currentTime}
-            onChange={(e) => onSeek(Number(e.target.value))}
             aria-label="Seek timeline"
             className="h-1 w-full cursor-pointer appearance-none rounded-full bg-surface-highest accent-lime outline-hidden transition-all hover:h-1.5"
+            max={duration || 100}
+            min={0}
+            onChange={(e) => onSeek(Number(e.target.value))}
+            type="range"
+            value={currentTime}
           />
           <span className="text-[10px] font-medium text-muted-foreground/80 tabular-nums select-none">
             {secondsToLabel(duration)}
           </span>
         </div>
 
-        {/* Action Controls */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            {/* Play/Pause Button */}
             <button
-              onClick={onPlayToggle}
-              type="button"
               aria-label={isPlaying ? "Pause" : "Play"}
               className="grid size-9 place-items-center rounded-full bg-lime text-on-lime transition-transform hover:scale-105 active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-lime"
+              onClick={onPlayToggle}
+              type="button"
             >
               {isPlaying ? (
                 <Pause className="size-4" weight="fill" />
@@ -127,22 +182,20 @@ function Controls({
               )}
             </button>
 
-            {/* Skip Next Button */}
             <button
-              onClick={onSkipNext}
-              type="button"
               aria-label="Skip to next show"
               className="grid size-8 place-items-center rounded-full border border-outline-variant bg-surface/30 text-foreground transition-all hover:bg-surface-container hover:text-foreground active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue"
+              onClick={onSkipNext}
+              type="button"
             >
               <SkipForward className="size-3.5" weight="fill" />
             </button>
 
-            {/* Mute/Unmute Toggle */}
             <button
-              onClick={onMuteToggle}
-              type="button"
               aria-label={isMuted ? "Unmute sound" : "Mute sound"}
               className="grid size-8 place-items-center rounded-full border border-outline-variant bg-surface/30 text-foreground transition-all hover:bg-surface-container hover:text-foreground active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue"
+              onClick={onMuteToggle}
+              type="button"
             >
               {isMuted ? (
                 <SpeakerX className="size-3.5" />
@@ -151,14 +204,13 @@ function Controls({
               )}
             </button>
 
-            {/* Title display */}
-            <span className="text-xs font-semibold text-foreground select-none truncate max-w-[200px] md:max-w-xs ml-1">
+            <span className="ml-1 max-w-[200px] truncate text-xs font-semibold text-foreground select-none md:max-w-xs">
               Now Watching: <span className="text-lime">{title}</span>
             </span>
           </div>
 
           <div className="hidden sm:block">
-            <span className="text-[10px] font-bold tracking-wider uppercase text-muted-foreground/80 select-none">
+            <span className="text-[10px] font-bold tracking-wider text-muted-foreground/80 uppercase select-none">
               Cinema Mode
             </span>
           </div>
@@ -174,36 +226,33 @@ function Controls({
 export function FullscreenPlayer() {
   const { dispatch, isFullscreen, isPlaying, nowPlayingId, queue } = usePlayer()
   const activeShow = SHOWS_BY_ID[nowPlayingId]
-
-  const [currentTime, setCurrentTime] = React.useState(0)
-  const [duration, setDuration] = React.useState(0)
-  const [isBuffering, setIsBuffering] = React.useState(false)
-  const [isMuted, setIsMuted] = React.useState(false)
-  const [showControls, setShowControls] = React.useState(true)
+  const [ui, dispatchUi] = React.useReducer(
+    fullscreenUiReducer,
+    initialFullscreenUiState
+  )
 
   const videoRef = React.useRef<HTMLVideoElement>(null)
-  const controlsTimeoutRef = React.useRef<number | null>(null)
 
-  /**
-   * Closes the player and stops playback.
-   */
-  const handleClose = React.useCallback(() => {
+  const closePlayer = React.useCallback(() => {
     dispatch({ type: "setFullscreen", value: false })
     dispatch({ type: "setPlaying", value: false })
   }, [dispatch])
 
-  // Listen for Escape key to close player
+  const closePlayerFromEffect = React.useEffectEvent(() => {
+    dispatch({ type: "setFullscreen", value: false })
+    dispatch({ type: "setPlaying", value: false })
+  })
+
   React.useEffect(() => {
     function handleKeyDown(event: KeyboardEvent) {
       if (event.key === "Escape" && isFullscreen) {
-        handleClose()
+        closePlayerFromEffect()
       }
     }
     window.addEventListener("keydown", handleKeyDown)
     return () => window.removeEventListener("keydown", handleKeyDown)
-  }, [isFullscreen, handleClose])
+  }, [isFullscreen])
 
-  // Synchronize playback with global states
   React.useEffect(() => {
     const video = videoRef.current
     if (!video) return
@@ -217,122 +266,134 @@ export function FullscreenPlayer() {
     }
   }, [isFullscreen, isPlaying, nowPlayingId])
 
-  // Track and handle mouse inactivity to fade controls
   React.useEffect(() => {
     if (!isFullscreen || !isPlaying) return
 
+    let timeoutId: number | null = null
+
     const handleMouseMove = () => {
-      setShowControls(true)
-      if (controlsTimeoutRef.current !== null) {
-        window.clearTimeout(controlsTimeoutRef.current)
+      dispatchUi({ type: "setShowControls", value: true })
+      if (timeoutId !== null) {
+        window.clearTimeout(timeoutId)
       }
       // setTimeout is used here as a last resort to implement the standard video player behavior of hiding UI controls after a period of mouse inactivity.
-      controlsTimeoutRef.current = window.setTimeout(() => {
-        setShowControls(false)
-      }, 2500)
+      timeoutId = window.setTimeout(() => {
+        dispatchUi({ type: "setShowControls", value: false })
+      }, CONTROLS_HIDE_DELAY_MS)
     }
 
     window.addEventListener("mousemove", handleMouseMove)
-    handleMouseMove() // Initialize visibility
+    handleMouseMove()
 
     return () => {
       window.removeEventListener("mousemove", handleMouseMove)
-      if (controlsTimeoutRef.current !== null) {
-        window.clearTimeout(controlsTimeoutRef.current)
+      if (timeoutId !== null) {
+        window.clearTimeout(timeoutId)
       }
     }
   }, [isFullscreen, isPlaying])
 
-  // Reset timeline position when closing
   React.useEffect(() => {
-    if (!isFullscreen) {
-      if (videoRef.current) {
-        videoRef.current.currentTime = 0
-      }
+    if (!isFullscreen && videoRef.current) {
+      videoRef.current.currentTime = 0
     }
   }, [isFullscreen])
 
   if (!activeShow) return null
 
-  const isControlsVisible = showControls || !isPlaying
+  const isControlsVisible = ui.showControls || !isPlaying
 
   return (
     <AnimatePresence>
       {isFullscreen ? (
-        <motion.div
-          key="fullscreen-player"
+        <m.div
           animate="show"
-          className="fixed inset-0 z-50 flex flex-col justify-between bg-black"
+          className="fixed inset-0 z-50 flex flex-col justify-between bg-background"
           exit="hidden"
           initial="hidden"
+          key="fullscreen-player"
           transition={springSoft}
           variants={overlayFade}
         >
-          {/* Video Element */}
           <video
-            ref={videoRef}
-            src={activeShow.trailer}
-            poster={activeShow.blurDataURL}
-            muted={isMuted}
-            playsInline
-            preload="auto"
-            onWaiting={() => setIsBuffering(true)}
-            onPlaying={() => setIsBuffering(false)}
-            onTimeUpdate={(e) => setCurrentTime(e.currentTarget.currentTime)}
-            onLoadedMetadata={(e) => setDuration(e.currentTarget.duration)}
+            aria-label={`Playing ${activeShow.title}`}
+            className="absolute inset-0 size-full object-cover"
+            muted={ui.isMuted}
             onEnded={() => {
               if (queue.length > 0) {
                 dispatch({ type: "next" })
               } else {
-                handleClose()
+                closePlayer()
               }
             }}
-            className="absolute inset-0 size-full object-cover"
-          />
+            onLoadedMetadata={(e) =>
+              dispatchUi({ type: "setDuration", value: e.currentTarget.duration })
+            }
+            onPlaying={() => dispatchUi({ type: "setBuffering", value: false })}
+            onTimeUpdate={(e) =>
+              dispatchUi({
+                type: "setCurrentTime",
+                value: e.currentTarget.currentTime,
+              })
+            }
+            onWaiting={() => dispatchUi({ type: "setBuffering", value: true })}
+            playsInline
+            poster={activeShow.blurDataURL}
+            preload="auto"
+            ref={videoRef}
+            src={activeShow.trailer}
+          >
+            <track
+              default
+              kind="captions"
+              label="Captions"
+              src={EMPTY_CAPTIONS_SRC}
+              srcLang="en"
+            />
+          </video>
 
-          {/* Buffering/Loading Indicator */}
           <AnimatePresence>
-            {isBuffering ? (
-              <motion.div
+            {ui.isBuffering ? (
+              <m.div
                 animate={{ opacity: 1 }}
-                className="absolute inset-0 grid place-items-center bg-black/20 backdrop-blur-xs pointer-events-none"
+                className="pointer-events-none absolute inset-0 grid place-items-center bg-black/20 backdrop-blur-xs"
                 exit={{ opacity: 0 }}
                 initial={{ opacity: 0 }}
               >
                 <CircleNotch className="size-10 animate-spin text-lime" />
-              </motion.div>
+              </m.div>
             ) : null}
           </AnimatePresence>
 
-          {/* Close button position overlay (always accessible) */}
           <div
             className={cn(
               "absolute top-6 right-6 z-10 transition-opacity duration-300",
-              isControlsVisible ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
+              isControlsVisible
+                ? "pointer-events-auto opacity-100"
+                : "pointer-events-none opacity-0"
             )}
           >
-            <FullscreenPlayer.CloseButton onClose={handleClose} />
+            <FullscreenPlayer.CloseButton onClose={closePlayer} />
           </div>
 
-          {/* Controls Overlay Layer */}
           <FullscreenPlayer.Controls
-            currentTime={currentTime}
-            duration={duration}
-            isMuted={isMuted}
+            currentTime={ui.currentTime}
+            duration={ui.duration}
+            isMuted={ui.isMuted}
             isPlaying={isPlaying}
-            onMuteToggle={() => setIsMuted((m) => !m)}
+            onMuteToggle={() => dispatchUi({ type: "toggleMuted" })}
             onPlayToggle={() => dispatch({ type: "togglePlay" })}
             onSeek={(val) => {
               if (videoRef.current) {
                 videoRef.current.currentTime = val
               }
-              setCurrentTime(val)
+              dispatchUi({ type: "setCurrentTime", value: val })
             }}
             onSkipNext={() => dispatch({ type: "next" })}
             showControls={isControlsVisible}
             title={activeShow.title}
           />
-        </motion.div>
+        </m.div>
       ) : null}
     </AnimatePresence>
   )

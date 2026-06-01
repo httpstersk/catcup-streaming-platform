@@ -27,7 +27,10 @@ export function ShowGrid() {
     const isDefaultView = activeFilter === "all" && query === ""
 
     if (isDefaultView) {
-      const featured = FEATURED_GRID_IDS.map((id) => SHOWS_BY_ID[id]).filter(Boolean)
+      const featured = FEATURED_GRID_IDS.flatMap((id) => {
+        const show = SHOWS_BY_ID[id]
+        return show ? [show] : []
+      })
       const remaining = SHOWS.filter((show) => !FEATURED_GRID_IDS.includes(show.id))
       return [...featured, ...remaining]
     }

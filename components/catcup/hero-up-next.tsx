@@ -1,6 +1,7 @@
 "use client"
 
-import { AnimatePresence, motion } from "motion/react"
+import { AnimatePresence } from "motion/react"
+import * as m from "motion/react-m"
 import { SkipForward } from "@phosphor-icons/react"
 
 import { fadeRise, springSoft } from "@/lib/motion"
@@ -21,7 +22,7 @@ export function HeroUpNext() {
   return (
     <AnimatePresence>
       {next && show ? (
-        <motion.div
+        <m.div
           animate="show"
           className="flex flex-col gap-3 rounded-card border border-white/10 bg-surface-lowest/70 p-3.5 backdrop-blur-xl"
           exit="hidden"
@@ -64,7 +65,7 @@ export function HeroUpNext() {
               </span>
             </span>
           </button>
-        </motion.div>
+        </m.div>
       ) : null}
     </AnimatePresence>
   )

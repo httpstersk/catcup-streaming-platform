@@ -1,6 +1,6 @@
 "use client"
 
-import { motion } from "motion/react"
+import * as m from "motion/react-m"
 import {
   Bird,
   Bug,
@@ -61,7 +61,7 @@ export function CategoryRail() {
                   )}
                 >
                   {isActive ? (
-                    <motion.span
+                    <m.span
                       className="absolute inset-0 rounded-full bg-blue"
                       layoutId="rail-active"
                       transition={springSoft}

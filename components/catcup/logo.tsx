@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils"
 
-export function CatCupMark({ className }: { className?: string }) {
+function CatCupMark({ className }: { className?: string }) {
   return (
     <svg
       aria-hidden="true"
@@ -41,24 +41,17 @@ export function CatCupMark({ className }: { className?: string }) {
   )
 }
 
-export function CatCupWordmark({ className }: { className?: string }) {
-  return (
-    <span
-      className={cn(
-        "text-title-md font-bold tracking-tight text-foreground",
-        className
-      )}
-    >
-      CatCup
-    </span>
-  )
-}
-
 export function CatCupLogo({ className }: { className?: string }) {
   return (
     <div className={cn("flex items-center gap-2", className)}>
       <CatCupMark className="size-9" />
-      <CatCupWordmark className="text-4xl" />
+      <span
+        className={cn(
+          "text-4xl text-title-md font-bold tracking-tight text-foreground"
+        )}
+      >
+        CatCup
+      </span>
     </div>
   )
 }

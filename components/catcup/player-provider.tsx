@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { MotionConfig } from "motion/react"
+import { domAnimation, LazyMotion, MotionConfig } from "motion/react"
 
 import {
   durationToSeconds,
@@ -73,7 +73,6 @@ function reducer(state: PlayerState, action: PlayerAction): PlayerState {
     case "clearQueue":
       return { ...state, queue: [] }
     case "enqueue":
-      if (state.queue.some((q) => q.showId === action.showId)) return state
       return {
         ...state,
         queue: [
@@ -173,7 +172,9 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
   return (
     <PlayerDispatchContext.Provider value={dispatch}>
       <PlayerStateContext.Provider value={stateValue}>
-        <MotionConfig reducedMotion="user">{children}</MotionConfig>
+        <LazyMotion features={domAnimation} strict>
+          <MotionConfig reducedMotion="user">{children}</MotionConfig>
+        </LazyMotion>
       </PlayerStateContext.Provider>
     </PlayerDispatchContext.Provider>
   )
@@ -184,7 +185,7 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
  * for components that only trigger actions, to avoid re-rendering on state changes.
  */
 export function usePlayerDispatch(): React.Dispatch<PlayerAction> {
-  const dispatch = React.useContext(PlayerDispatchContext)
+  const dispatch = React.use(PlayerDispatchContext)
   if (!dispatch) {
     throw new Error("usePlayerDispatch must be used within a PlayerProvider")
   }
@@ -192,9 +193,9 @@ export function usePlayerDispatch(): React.Dispatch<PlayerAction> {
 }
 
 export function usePlayer(): PlayerContextValue {
-  const state = React.useContext(PlayerStateContext)
-  const dispatch = React.useContext(PlayerDispatchContext)
-  if (!state || !dispatch) {
+  const dispatch = React.use(PlayerDispatchContext)
+  const state = React.use(PlayerStateContext)
+  if (!dispatch || !state) {
     throw new Error("usePlayer must be used within a PlayerProvider")
   }
   return { ...state, dispatch }

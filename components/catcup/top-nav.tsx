@@ -1,6 +1,6 @@
 "use client"
 
-import { motion } from "motion/react"
+import * as m from "motion/react-m"
 import { Bell, Cat, MagnifyingGlass } from "@phosphor-icons/react"
 
 import { springSoft } from "@/lib/motion"
@@ -74,7 +74,7 @@ function TopNavLinks() {
           >
             {link.label}
             {isActive ? (
-              <motion.span
+              <m.span
                 className="absolute -bottom-1 left-0 h-0.5 w-full rounded-full bg-blue"
                 layoutId="topnav-underline"
                 transition={springSoft}
