@@ -1,6 +1,6 @@
 "use client"
 
-import { Plus } from "lucide-react"
+import { Play, Plus } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 import { Show } from "@/lib/shows"
@@ -50,6 +50,25 @@ export function ShowCard({ className, featured = false, show }: ShowCardProps) {
       />
 
       <span className="pointer-events-none absolute inset-0 bg-linear-to-t from-black/80 via-black/10 to-transparent" />
+
+      <span
+        aria-hidden
+        className="pointer-events-none absolute inset-0 z-[1] flex items-center justify-center"
+      >
+        <span
+          className={cn(
+            "grid scale-90 place-items-center rounded-full bg-black/60 text-foreground opacity-0 shadow-lift transition-[opacity,transform] duration-200 ease-out group-focus-within:scale-100 group-focus-within:opacity-100 group-hover:scale-100 group-hover:opacity-100",
+            featured ? "size-20" : "size-16"
+          )}
+        >
+          <Play
+            className={cn(
+              "translate-x-0.5 fill-current",
+              featured ? "size-10" : "size-8"
+            )}
+          />
+        </span>
+      </span>
 
       <CategoryBadge
         category={show.category}

@@ -7,9 +7,9 @@ import { usePlayer } from "@/components/catcup/player-provider"
 import { TrailerMedia } from "@/components/catcup/trailer-media"
 
 /**
- * Compact, glassy "Up Next" preview that floats over the hero. Shows the first
- * queued show with its runtime and a skip-to-next control. Renders nothing when
- * the queue is empty so the hero stays uncluttered.
+ * Compact, glassy "Up Next" preview for the hero. Shows the first queued show
+ * with its runtime and a skip-to-next control. Renders nothing when the queue is
+ * empty so the hero stays uncluttered.
  */
 export function HeroUpNext() {
   const { dispatch, queue } = usePlayer()

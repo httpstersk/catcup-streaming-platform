@@ -7,28 +7,34 @@ import { cn } from "@/lib/utils"
 import { Show } from "@/lib/shows"
 
 interface TrailerMediaProps {
-  show: Show
   active?: boolean
-  previewOnHover?: boolean
-  priority?: boolean
-  sizes?: string
+  autoplay?: boolean
   className?: string
   imageClassName?: string
+  previewOnHover?: boolean
+  priority?: boolean
+  show: Show
+  sizes?: string
 }
 
+/**
+ * Thumbnail with an optional muted preview clip. Hover cards defer loading until
+ * first interaction; pass `autoplay` for always-on background playback (e.g. hero).
+ */
 export function TrailerMedia({
-  show,
   active = false,
-  previewOnHover = true,
-  priority = false,
-  sizes,
+  autoplay = false,
   className,
   imageClassName,
+  previewOnHover = true,
+  priority = false,
+  show,
+  sizes,
 }: TrailerMediaProps) {
   const [hovered, setHovered] = React.useState(false)
-  const [hasLoaded, setHasLoaded] = React.useState(active)
+  const [hasLoaded, setHasLoaded] = React.useState(active || autoplay)
   const videoRef = React.useRef<HTMLVideoElement>(null)
-  const shouldPlay = active || (previewOnHover && hovered)
+  const shouldPlay = active || autoplay || (previewOnHover && hovered)
   // Only attach the preview clip source once playback is first requested, so
   // idle cards never fetch video and re-hovering stays instant.
   const shouldLoad = hasLoaded || shouldPlay
@@ -66,12 +72,13 @@ export function TrailerMedia({
       />
       <video
         ref={videoRef}
+        autoPlay={autoplay}
         src={shouldLoad ? show.preview : undefined}
         poster={show.blurDataURL}
         muted
         loop
         playsInline
-        preload="none"
+        preload={autoplay ? "auto" : "none"}
         className={cn(
           "absolute top-1/2 left-1/2 min-h-full min-w-full -translate-x-1/2 -translate-y-1/2 object-cover transition-opacity duration-500",
           shouldPlay ? "opacity-100" : "opacity-0"
