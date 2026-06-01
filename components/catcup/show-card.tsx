@@ -1,6 +1,6 @@
 "use client"
 
-import { Play } from "lucide-react"
+import { Plus } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 import { Show } from "@/lib/shows"
@@ -24,17 +24,22 @@ export function ShowCard({ className, featured = false, show }: ShowCardProps) {
   const { dispatch } = usePlayer()
 
   return (
-    <button
+    <div
       className={cn(
-        "group relative block overflow-hidden rounded-card border border-hairline bg-surface-low text-left transition-transform duration-200 hover:scale-[1.01] focus-visible:scale-[1.01] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue",
+        "group relative block overflow-hidden rounded-card border border-hairline bg-surface-low text-left transition-transform duration-200 hover:scale-[1.01] focus-within:scale-[1.01]",
         featured ? "aspect-video lg:aspect-auto lg:h-full" : "aspect-video",
         className
       )}
-      onClick={() => dispatch({ type: "play", showId: show.id })}
-      type="button"
     >
+      <button
+        aria-label={`Play ${show.title}`}
+        className="absolute inset-0 z-0 size-full rounded-card focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue"
+        onClick={() => dispatch({ type: "play", showId: show.id })}
+        type="button"
+      />
+
       <TrailerMedia
-        className="absolute inset-0 size-full"
+        className="pointer-events-none absolute inset-0 size-full"
         imageClassName="transition-transform duration-300 group-hover:scale-105"
         show={show}
         sizes={
@@ -47,19 +52,30 @@ export function ShowCard({ className, featured = false, show }: ShowCardProps) {
       <span className="pointer-events-none absolute inset-0 bg-linear-to-t from-black/80 via-black/10 to-transparent" />
 
       {show.isLive ? (
-        <span className="absolute top-3 left-3 inline-flex items-center gap-1.5 rounded-md bg-lime px-2 py-1 text-label-bold text-on-lime">
+        <span className="pointer-events-none absolute top-3 left-3 inline-flex items-center gap-1.5 rounded-md bg-lime px-2 py-1 text-label-bold text-on-lime">
           <span className="size-1.5 animate-pulse rounded-full bg-on-lime" />
           Live
         </span>
       ) : (
-        <CategoryBadge category={show.category} className="absolute top-3 left-3" />
+        <CategoryBadge
+          category={show.category}
+          className="pointer-events-none absolute top-3 left-3"
+        />
       )}
 
-      <span className="absolute top-3 right-3 grid size-8 place-items-center rounded-full bg-black/45 text-foreground opacity-0 backdrop-blur-md transition-opacity duration-200 group-hover:opacity-100">
-        <Play className="size-3.5 fill-current" />
-      </span>
+      <button
+        aria-label={`Add ${show.title} to queue`}
+        className="absolute top-3 right-3 z-10 grid size-8 place-items-center rounded-full bg-black/45 text-foreground opacity-0 backdrop-blur-md transition-opacity duration-200 hover:bg-black/65 focus-visible:opacity-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue group-hover:opacity-100 group-focus-within:opacity-100"
+        onClick={(e) => {
+          e.stopPropagation()
+          dispatch({ type: "enqueue", showId: show.id })
+        }}
+        type="button"
+      >
+        <Plus className="size-4" />
+      </button>
 
-      <div className="absolute right-4 bottom-4 left-4 flex flex-col gap-1">
+      <div className="pointer-events-none absolute right-4 bottom-4 left-4 flex flex-col gap-1">
         <h4
           className={cn(
             "font-bold text-foreground",
@@ -74,6 +90,6 @@ export function ShowCard({ className, featured = false, show }: ShowCardProps) {
           </p>
         ) : null}
       </div>
-    </button>
+    </div>
   )
 }

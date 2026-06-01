@@ -29,6 +29,14 @@ export const CATEGORY_META: Record<Category, CategoryMeta> = {
   },
 }
 
+/** DOM id of the "More Shows for Kitty" section, used as a scroll anchor. */
+export const MORE_SHOWS_SECTION_ID = "more-shows"
+
+/** Type guard: true only for the specific browsable categories (excludes "all"/"live"). */
+export function isCategory(value: string): value is Category {
+  return value in CATEGORY_META
+}
+
 /**
  * Represents a single video show or stream on the platform.
  */

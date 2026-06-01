@@ -3,7 +3,13 @@
 import * as React from "react"
 import { ArrowRight } from "lucide-react"
 
-import { FEATURED_GRID_IDS, SHOWS, SHOWS_BY_ID, type Show } from "@/lib/shows"
+import {
+  FEATURED_GRID_IDS,
+  MORE_SHOWS_SECTION_ID,
+  SHOWS,
+  SHOWS_BY_ID,
+  type Show,
+} from "@/lib/shows"
 import { usePlayer } from "@/components/catcup/player-provider"
 import { ShowCard } from "@/components/catcup/show-card"
 
@@ -44,7 +50,7 @@ export function ShowGrid() {
   const overflow = rest.slice(2)
 
   return (
-    <section className="flex flex-col gap-5">
+    <section className="flex flex-col gap-5 scroll-mt-20" id={MORE_SHOWS_SECTION_ID}>
       <h3 className="text-title-md inline-flex items-center gap-2 font-bold text-foreground">
         More Shows for Kitty
         <ArrowRight className="size-5 text-muted-foreground" />
@@ -55,7 +61,7 @@ export function ShowGrid() {
           No shows match this filter yet.
         </p>
       ) : (
-        <div className="grid gap-4 lg:grid-cols-3">
+        <div className="grid gap-4 lg:min-h-[420px] lg:grid-cols-3">
           <ShowCard
             className="lg:col-span-2 lg:row-span-2"
             featured

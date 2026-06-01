@@ -10,6 +10,7 @@ import {
   type LucideIcon,
 } from "lucide-react"
 
+import { scrollToCategoryShows } from "@/lib/scroll"
 import { cn } from "@/lib/utils"
 import { usePlayer } from "@/components/catcup/player-provider"
 
@@ -49,7 +50,10 @@ export function CategoryRail() {
               <button
                 aria-pressed={isActive}
                 className="group flex w-14 flex-col items-center gap-2 focus-visible:outline-none"
-                onClick={() => dispatch({ type: "setFilter", value: item.filter })}
+                onClick={() => {
+                  dispatch({ type: "setFilter", value: item.filter })
+                  scrollToCategoryShows(item.filter)
+                }}
                 type="button"
               >
                 <span

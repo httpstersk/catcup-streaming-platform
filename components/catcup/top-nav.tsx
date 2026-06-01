@@ -2,6 +2,7 @@
 
 import { Bell, Cat, Search } from "lucide-react"
 
+import { scrollToCategoryShows } from "@/lib/scroll"
 import { cn } from "@/lib/utils"
 import { CatCupLogo } from "@/components/catcup/logo"
 import { usePlayer } from "@/components/catcup/player-provider"
@@ -64,7 +65,10 @@ function TopNavLinks() {
                 : "text-muted-foreground hover:text-foreground"
             )}
             key={link.id}
-            onClick={() => dispatch({ type: "setFilter", value: link.filter })}
+            onClick={() => {
+              dispatch({ type: "setFilter", value: link.filter })
+              scrollToCategoryShows(link.filter)
+            }}
             type="button"
           >
             {link.label}
