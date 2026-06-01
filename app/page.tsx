@@ -1,6 +1,7 @@
 import type { Metadata } from "next"
 
 import { CategoryRail } from "@/components/catcup/category-rail"
+import { PageContainer } from "@/components/catcup/page-container"
 import { siteMetadata } from "@/lib/site-metadata"
 import { FullscreenPlayer } from "@/components/catcup/fullscreen-player"
 import { Hero } from "@/components/catcup/hero"
@@ -19,10 +20,10 @@ export default function Page() {
         <StickyHeroUpNext />
         <main className="relative flex flex-col gap-10 pb-16">
           <Hero />
-          <div className="mx-auto flex w-full max-w-[1440px] flex-col gap-10 px-4 sm:px-6 lg:px-10">
+          <PageContainer className="flex flex-col gap-10">
             <CategoryRail />
             <ShowGrid />
-          </div>
+          </PageContainer>
         </main>
         <FullscreenPlayer />
       </div>

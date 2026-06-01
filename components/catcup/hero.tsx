@@ -7,6 +7,7 @@ import { FEATURED_SHOW } from "@/lib/shows"
 import { usePlayer } from "@/components/catcup/player-provider"
 import { CategoryBadge } from "@/components/catcup/category-badge"
 import { HeroUpNext } from "@/components/catcup/hero-up-next"
+import { PageContainer } from "@/components/catcup/page-container"
 import { TrailerMedia } from "@/components/catcup/trailer-media"
 
 /**
@@ -41,7 +42,7 @@ export function Hero() {
         <div className="absolute inset-0 bg-linear-to-t from-background via-background/30 to-transparent" />
       </div>
 
-      <div className="relative mx-auto grid min-h-[82svh] w-full max-w-[1440px] grid-cols-1 items-end gap-6 px-4 pt-24 pb-10 sm:px-6 lg:grid-cols-[minmax(0,1fr)_320px] lg:items-center lg:gap-8 lg:px-10 lg:pb-14">
+      <PageContainer className="relative grid min-h-[82svh] grid-cols-1 items-end gap-6 pt-24 pb-10 lg:grid-cols-[minmax(0,1fr)_320px] lg:items-center lg:gap-8 lg:pb-14">
         <div className="flex flex-col items-start gap-4 lg:max-w-xl">
           <CategoryBadge category={show.category} />
 
@@ -80,7 +81,7 @@ export function Hero() {
         <div className="z-20 w-full max-w-sm lg:hidden">
           <HeroUpNext />
         </div>
-      </div>
+      </PageContainer>
     </section>
   )
 }

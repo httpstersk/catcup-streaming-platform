@@ -7,6 +7,7 @@ import { springSoft } from "@/lib/motion"
 import { scrollToCategoryShows } from "@/lib/scroll"
 import { cn } from "@/lib/utils"
 import { CatCupLogo } from "@/components/catcup/logo"
+import { PageContainer } from "@/components/catcup/page-container"
 import { usePlayer, usePlayerDispatch } from "@/components/catcup/player-provider"
 
 interface NavLink {
@@ -128,12 +129,14 @@ function TopNavActions() {
  */
 export function TopNav() {
   return (
-    <header className="sticky top-0 z-30 flex h-16 items-center justify-between gap-4 px-4 backdrop-blur-md sm:px-6 lg:px-10">
-      <div className="flex items-center gap-9">
-        <TopNav.Brand />
-        <TopNav.Links />
-      </div>
-      <TopNav.Actions />
+    <header className="sticky top-0 z-30 backdrop-blur-md">
+      <PageContainer className="flex h-16 items-center justify-between gap-4">
+        <div className="flex items-center gap-9">
+          <TopNav.Brand />
+          <TopNav.Links />
+        </div>
+        <TopNav.Actions />
+      </PageContainer>
     </header>
   )
 }
