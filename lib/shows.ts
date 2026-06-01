@@ -29,86 +29,143 @@ export const CATEGORY_META: Record<Category, CategoryMeta> = {
   },
 }
 
+/**
+ * Represents a single video show or stream on the platform.
+ */
 export interface Show {
-  id: string
-  title: string
+  /** The content category of the show. */
   category: Category
-  duration: string
-  thumbnail: string
-  trailer: string
-  tags: string[]
+  /** A short description of the show's content. */
   description: string
+  /** The duration format label (e.g. "12:15"). */
+  duration: string
+  /** Unique identifier for the show. */
+  id: string
+  /** Optional flag indicating if the show is a live stream. */
   isLive?: boolean
+  /** Tags for indexing and searching. */
+  tags: string[]
+  /** URL path to the thumbnail WebP image. */
+  thumbnail: string
+  /** Display title of the show. */
+  title: string
+  /** URL path to the MP4 trailer/video asset. */
+  trailer: string
 }
 
 export const SHOWS: Show[] = [
   {
+    category: "chase",
+    description: "Watch agile jumpers navigate the canopy and leap from branch to branch. Fast moves, rustling leaves, and endless curiosity.",
+    duration: "10:45",
     id: "branch-bounder",
-    title: "Branch Bounder",
-    category: "chase",
-    duration: "10:45",
-    thumbnail: "/images/tv-show-thumbnail-branch-bounder.webp",
-    trailer: "/videos/tv-show-trailer-branch-bounder.mp4",
     tags: ["Trees", "Jumping", "Active", "Outdoors"],
-    description:
-      "Watch agile jumpers navigate the canopy and leap from branch to branch. Fast moves, rustling leaves, and endless curiosity.",
+    thumbnail: "/images/tv-show-thumbnail-branch-bounder.webp",
+    title: "Branch Bounder",
+    trailer: "/videos/tv-show-trailer-branch-bounder.mp4",
   },
   {
-    id: "wild-yard",
-    title: "Wild Yard",
+    category: "calm",
+    description: "Delight in the gentle, hypnotic dance of colorful butterflies drifting across a sunny garden. Perfect for a peaceful cat nap.",
+    duration: "09:15",
+    id: "butterfly-drift",
+    tags: ["Butterflies", "Calming", "Garden", "Outdoors"],
+    thumbnail: "/images/tv-show-thumbnail-butterfly-drift.webp",
+    title: "Butterfly Drift",
+    trailer: "/videos/tv-show-trailer-butterfly-drift.mp4",
+  },
+  {
     category: "birds",
-    duration: "14:20",
-    thumbnail: "/images/tv-show-thumbnail-wild-yard.webp",
-    trailer: "/videos/tv-show-trailer-wild-yard.mp4",
-    tags: ["Garden", "Flocks", "Splashing", "Outdoors"],
-    description:
-      "A busy backyard bird bath bursting with sparrows and jays. Fluttering wings and flicking water to keep every whisker twitching.",
+    description: "Swirling, dancing feathers of all shapes and sizes designed to trigger your kitty's tracking reflexes and pouncing paw.",
+    duration: "11:30",
+    id: "feather-frenzy",
+    tags: ["Feathers", "Playful", "Interactive", "Active"],
+    thumbnail: "/images/tv-show-thumbnail-feather-frenzy.webp",
+    title: "Feather Frenzy",
+    trailer: "/videos/tv-show-trailer-feather-frenzy.mp4",
   },
   {
-    id: "frost-runner",
-    title: "Frost Runner",
+    category: "calm",
+    description: "A serene, high-definition view of colorful tropical fish swimming lazily through clear blue water. An absolute cat favorite.",
+    duration: "15:00",
+    id: "fish-tank-live",
+    isLive: true,
+    tags: ["Aquarium", "Fish", "Calming", "Indoor"],
+    thumbnail: "/images/tv-show-thumbnail-fish-tank-live.webp",
+    title: "Fish Tank Live",
+    trailer: "/videos/tv-show-trailer-fish-tank-life.mp4",
+  },
+  {
     category: "chase",
+    description: "A high-speed chase through an icy wonderland. Follow the elusive snow hare as it darts between frost-covered pines. Perfect for stimulating active feline hunting instincts.",
     duration: "10:45",
-    thumbnail: "/images/tv-show-thumbnail-frost-runner.webp",
-    trailer: "/videos/tv-show-trailer-frost-runner.mp4",
+    id: "frost-runner",
+    isLive: true,
     tags: ["Snow", "Sprint", "Active", "Winter"],
-    description:
-      "A high-speed chase through an icy wonderland. Follow the elusive snow hare as it darts between frost-covered pines. Perfect for stimulating active feline hunting instincts.",
-    isLive: true,
+    thumbnail: "/images/tv-show-thumbnail-frost-runner.webp",
+    title: "Frost Runner",
+    trailer: "/videos/tv-show-trailer-frost-runner.mp4",
   },
   {
-    id: "grasshopper-leap",
-    title: "Grasshopper Leap",
     category: "bugs",
+    description: "Spot the hidden gecko as it crawls stealthily around green leaves. Quick tail twitches will capture your cat's absolute focus.",
+    duration: "07:45",
+    id: "gecko-hideout",
+    tags: ["Gecko", "Reptiles", "Hiding", "Plants"],
+    thumbnail: "/images/tv-show-thumbnail-gecko-hideout.webp",
+    title: "Gecko Hideout",
+    trailer: "/videos/tv-show-trailer-gecko-hideout.mp4",
+  },
+  {
+    category: "bugs",
+    description: "Close-up meadow hops with a bright green grasshopper. Twitchy antennae and surprise leaps across the tall grass.",
     duration: "08:30",
-    thumbnail: "/images/tv-show-thumbnail-grasshopper-leap.webp",
-    trailer: "/videos/tv-show-trailer-grasshopper-leap.mp4",
+    id: "grasshopper-leap",
     tags: ["Meadow", "Hopping", "Tiny", "Summer"],
-    description:
-      "Close-up meadow hops with a bright green grasshopper. Twitchy antennae and surprise leaps across the tall grass.",
+    thumbnail: "/images/tv-show-thumbnail-grasshopper-leap.webp",
+    title: "Grasshopper Leap",
+    trailer: "/videos/tv-show-trailer-grasshopper-leap.mp4",
   },
   {
-    id: "squirrel-chase",
-    title: "Squirrel Chase",
-    category: "chase",
-    duration: "12:05",
-    thumbnail: "/images/tv-show-thumbnail-squirrel-chase.webp",
-    trailer: "/videos/tv-show-trailer-squirrel-chase.mp4",
-    tags: ["Trees", "Scramble", "Fast", "Outdoors"],
-    description:
-      "A red squirrel scrambles up bark at full speed, tail whirling. Blurred motion and zig-zag dashes around the trunk.",
-  },
-  {
-    id: "lizard-scamper",
-    title: "Lizard Scamper",
     category: "bugs",
+    description: "A vivid green lizard suns on a warm rock then darts away in a flash. Sudden scampers built to trigger the pounce.",
     duration: "12:15",
-    thumbnail: "/images/tv-show-thumbnail-lizard-scamper.webp",
-    trailer: "/videos/tv-show-trailer-lizard-scamper.mp4",
-    tags: ["Rocks", "Darting", "Reptile", "Sunny"],
-    description:
-      "A vivid green lizard suns on a warm rock then darts away in a flash. Sudden scampers built to trigger the pounce.",
+    id: "lizard-scamper",
     isLive: true,
+    tags: ["Rocks", "Darting", "Reptile", "Sunny"],
+    thumbnail: "/images/tv-show-thumbnail-lizard-scamper.webp",
+    title: "Lizard Scamper",
+    trailer: "/videos/tv-show-trailer-lizard-scamper.mp4",
+  },
+  {
+    category: "chase",
+    description: "Follow a quick little field mouse patter back and forth, rustling through straw and sneaking behind boxes.",
+    duration: "13:10",
+    id: "mouse-patrol",
+    tags: ["Mice", "Chase", "Fast-Moving", "Indoor"],
+    thumbnail: "/images/tv-show-thumbnail-mouse-patrol.webp",
+    title: "Mouse Patrol",
+    trailer: "/videos/tv-show-trailer-mouse-patrol.mp4",
+  },
+  {
+    category: "chase",
+    description: "A red squirrel scrambles up bark at full speed, tail whirling. Blurred motion and zig-zag dashes around the trunk.",
+    duration: "12:05",
+    id: "squirrel-chase",
+    tags: ["Trees", "Scramble", "Fast", "Outdoors"],
+    thumbnail: "/images/tv-show-thumbnail-squirrel-chase.webp",
+    title: "Squirrel Chase",
+    trailer: "/videos/tv-show-trailer-squirrel-chase.mp4",
+  },
+  {
+    category: "birds",
+    description: "A busy backyard bird bath bursting with sparrows and jays. Fluttering wings and flicking water to keep every whisker twitching.",
+    duration: "14:20",
+    id: "wild-yard",
+    tags: ["Garden", "Flocks", "Splashing", "Outdoors"],
+    thumbnail: "/images/tv-show-thumbnail-wild-yard.webp",
+    title: "Wild Yard",
+    trailer: "/videos/tv-show-trailer-wild-yard.mp4",
   },
 ]
 

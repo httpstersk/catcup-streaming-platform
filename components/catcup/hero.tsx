@@ -15,16 +15,12 @@ import { TrailerMedia } from "@/components/catcup/trailer-media"
  * previews the next queued show.
  */
 export function Hero() {
-  const { dispatch, isPlaying, nowPlayingId } = usePlayer()
+  const { dispatch, isFullscreen, isPlaying, nowPlayingId } = usePlayer()
   const show = FEATURED_SHOW
-  const isActive = nowPlayingId === show.id && isPlaying
+  const isActive = nowPlayingId === show.id && isPlaying && !isFullscreen
 
   function handlePlay() {
-    if (nowPlayingId === show.id) {
-      dispatch({ type: "togglePlay" })
-    } else {
-      dispatch({ type: "play", showId: show.id })
-    }
+    dispatch({ type: "play", showId: show.id })
   }
 
   return (

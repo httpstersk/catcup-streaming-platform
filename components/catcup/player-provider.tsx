@@ -10,55 +10,67 @@ import {
   SHOWS_BY_ID,
 } from "@/lib/shows"
 
+/**
+ * Represents the global playback and application state for the player.
+ */
 interface PlayerState {
-  isPlaying: boolean
-  autoPlay: boolean
-  napTimer: string
+  /** The currently active category filter for filtering lists. */
   activeFilter: string
-  search: string
+  /** Flag indicating if the next video should start automatically when current ends. */
+  autoPlay: boolean
+  /** Flag indicating if the full-screen player view is active. */
+  isFullscreen: boolean
+  /** Flag indicating if media is actively playing. */
+  isPlaying: boolean
+  /** The selected nap timer value (e.g. "30 min"). */
+  napTimer: string
+  /** The identifier of the show currently playing. */
   nowPlayingId: string
+  /** The list of upcoming shows in queue. */
   queue: QueueEntry[]
+  /** The current active search query string. */
+  search: string
 }
 
+/**
+ * Action union type for mutating the player state.
+ */
 type PlayerAction =
-  | { type: "togglePlay" }
-  | { type: "setPlaying"; value: boolean }
-  | { type: "toggleAutoPlay" }
-  | { type: "setNapTimer"; value: string }
-  | { type: "setFilter"; value: string }
-  | { type: "setSearch"; value: string }
-  | { type: "play"; showId: string }
-  | { type: "enqueue"; showId: string }
-  | { type: "removeFromQueue"; key: string }
   | { type: "clearQueue" }
+  | { type: "enqueue"; showId: string }
   | { type: "next" }
+  | { type: "play"; showId: string }
+  | { type: "removeFromQueue"; key: string }
+  | { type: "setFilter"; value: string }
+  | { type: "setFullscreen"; value: boolean }
+  | { type: "setNapTimer"; value: string }
+  | { type: "setPlaying"; value: boolean }
+  | { type: "setSearch"; value: string }
+  | { type: "toggleAutoPlay" }
+  | { type: "togglePlay" }
 
 const initialState: PlayerState = {
-  isPlaying: false,
-  autoPlay: true,
-  napTimer: "30 min",
   activeFilter: "all",
-  search: "",
+  autoPlay: true,
+  isFullscreen: false,
+  isPlaying: false,
+  napTimer: "30 min",
   nowPlayingId: FEATURED_SHOW.id,
   queue: INITIAL_QUEUE,
+  search: "",
 }
 
+/**
+ * State reducer for the player context.
+ *
+ * @param state - The current state.
+ * @param action - The action to process.
+ * @returns The next state.
+ */
 function reducer(state: PlayerState, action: PlayerAction): PlayerState {
   switch (action.type) {
-    case "togglePlay":
-      return { ...state, isPlaying: !state.isPlaying }
-    case "setPlaying":
-      return { ...state, isPlaying: action.value }
-    case "toggleAutoPlay":
-      return { ...state, autoPlay: !state.autoPlay }
-    case "setNapTimer":
-      return { ...state, napTimer: action.value }
-    case "setFilter":
-      return { ...state, activeFilter: action.value }
-    case "setSearch":
-      return { ...state, search: action.value }
-    case "play":
-      return { ...state, nowPlayingId: action.showId, isPlaying: true }
+    case "clearQueue":
+      return { ...state, queue: [] }
     case "enqueue":
       if (state.queue.some((q) => q.showId === action.showId)) return state
       return {
@@ -68,17 +80,48 @@ function reducer(state: PlayerState, action: PlayerAction): PlayerState {
           { key: `q-${action.showId}-${Date.now()}`, showId: action.showId },
         ],
       }
+    case "next": {
+      const [head, ...rest] = state.queue
+      if (!head) return state
+      return {
+        ...state,
+        isFullscreen: true,
+        isPlaying: true,
+        nowPlayingId: head.showId,
+        queue: rest,
+      }
+    }
+    case "play":
+      return {
+        ...state,
+        isFullscreen: true,
+        isPlaying: true,
+        nowPlayingId: action.showId,
+      }
     case "removeFromQueue":
       return {
         ...state,
         queue: state.queue.filter((q) => q.key !== action.key),
       }
-    case "clearQueue":
-      return { ...state, queue: [] }
-    case "next": {
-      const [head, ...rest] = state.queue
-      if (!head) return state
-      return { ...state, nowPlayingId: head.showId, queue: rest, isPlaying: true }
+    case "setFilter":
+      return { ...state, activeFilter: action.value }
+    case "setFullscreen":
+      return { ...state, isFullscreen: action.value }
+    case "setNapTimer":
+      return { ...state, napTimer: action.value }
+    case "setPlaying":
+      return { ...state, isPlaying: action.value }
+    case "setSearch":
+      return { ...state, search: action.value }
+    case "toggleAutoPlay":
+      return { ...state, autoPlay: !state.autoPlay }
+    case "togglePlay": {
+      const nextPlaying = !state.isPlaying
+      return {
+        ...state,
+        isFullscreen: nextPlaying ? true : state.isFullscreen,
+        isPlaying: nextPlaying,
+      }
     }
     default:
       return state

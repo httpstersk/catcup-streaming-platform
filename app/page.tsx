@@ -1,4 +1,5 @@
 import { CategoryRail } from "@/components/catcup/category-rail"
+import { FullscreenPlayer } from "@/components/catcup/fullscreen-player"
 import { Hero } from "@/components/catcup/hero"
 import { PlayerProvider } from "@/components/catcup/player-provider"
 import { ShowGrid } from "@/components/catcup/show-grid"
@@ -16,6 +17,7 @@ export default function Page() {
             <ShowGrid />
           </div>
         </main>
+        <FullscreenPlayer />
       </div>
     </PlayerProvider>
   )
