@@ -37,15 +37,6 @@ export function CatCupMark({ className }: { className?: string }) {
         strokeLinecap="round"
         fill="none"
       />
-      {/* inner screen */}
-      <rect
-        x="21.5"
-        y="26"
-        width="17"
-        height="14"
-        rx="3.5"
-        fill="currentColor"
-      />
     </svg>
   )
 }
@@ -54,7 +45,7 @@ export function CatCupWordmark({ className }: { className?: string }) {
   return (
     <span
       className={cn(
-        "text-title-md font-extrabold tracking-tight text-foreground",
+        "text-title-md font-bold tracking-tight text-foreground",
         className
       )}
     >
@@ -67,7 +58,7 @@ export function CatCupLogo({ className }: { className?: string }) {
   return (
     <div className={cn("flex items-center gap-2", className)}>
       <CatCupMark className="size-9" />
-      <CatCupWordmark className="text-2xl" />
+      <CatCupWordmark className="text-4xl" />
     </div>
   )
 }
