@@ -1,8 +1,9 @@
 "use client"
 
+import * as React from "react"
 import { AnimatePresence } from "motion/react"
 import * as m from "motion/react-m"
-import { SkipForward } from "@phosphor-icons/react"
+import { CaretDown, SkipForward } from "@phosphor-icons/react"
 
 import { fadeRise, springSoft } from "@/lib/motion"
 import { QueueEntry, SHOWS_BY_ID, type Show } from "@/lib/shows"
@@ -10,14 +11,28 @@ import { cn } from "@/lib/utils"
 import { usePlayer, usePlayerDispatch } from "@/components/catcup/player-provider"
 import { TrailerMedia } from "@/components/catcup/trailer-media"
 
+/** ID linking the collapse toggle to the expandable queue body. */
+const HERO_UP_NEXT_CONTENT_ID = "hero-up-next-content"
+
+interface BodyProps {
+  /** Remaining queue entries after the featured show. */
+  entries: QueueEntry[]
+  /** The queue entry to spotlight as the next show. */
+  next: QueueEntry
+}
+
 interface FeaturedProps {
   /** The queue entry to spotlight as the next show. */
   entry: QueueEntry
 }
 
 interface HeaderProps {
+  /** Whether the queue body is collapsed. */
+  isCollapsed: boolean
   /** Callback invoked when the user skips to the next queued show. */
   onSkip: () => void
+  /** Callback invoked when the user toggles the collapsed state. */
+  onToggleCollapse: () => void
   /** The show title used for the skip button's accessible label. */
   skipTitle: string
 }
@@ -46,10 +61,11 @@ interface ShowMetaProps {
 
 /**
  * Glassy Up Next panel with a featured next show and a compact lineup below.
- * Animates in and out so the hero stays uncluttered while the queue is empty.
+ * Collapses to a minimal header bar and animates in and out when the queue is empty.
  */
 function HeroUpNextRoot({ className }: HeroUpNextProps) {
   const { dispatch, queue } = usePlayer()
+  const [isCollapsed, setIsCollapsed] = React.useState(false)
   const [next, ...upcoming] = queue
   const nextShow = next ? SHOWS_BY_ID[next.showId] : undefined
 
@@ -60,23 +76,27 @@ function HeroUpNextRoot({ className }: HeroUpNextProps) {
           animate="show"
           aria-label="Up next queue"
           className={cn(
-            "flex flex-col gap-4 rounded-card border border-white/10 bg-surface-lowest/70 p-4 backdrop-blur-xl",
+            "flex flex-col rounded-card border border-white/10 bg-surface-lowest/70 p-4 backdrop-blur-xl",
             className
           )}
           exit="hidden"
           initial="hidden"
           key="hero-up-next"
+          layout
           transition={springSoft}
           variants={fadeRise}
         >
           <HeroUpNextHeader
+            isCollapsed={isCollapsed}
             onSkip={() => dispatch({ type: "next" })}
+            onToggleCollapse={() => setIsCollapsed((value) => !value)}
             skipTitle={nextShow.title}
           />
-          <HeroUpNextFeatured entry={next} />
-          {upcoming.length > 0 ? (
-            <HeroUpNextLineup entries={upcoming} />
-          ) : null}
+          <HeroUpNextBody
+            entries={upcoming}
+            isCollapsed={isCollapsed}
+            next={next}
+          />
         </m.aside>
       ) : null}
     </AnimatePresence>
@@ -84,15 +104,44 @@ function HeroUpNextRoot({ className }: HeroUpNextProps) {
 }
 
 /**
- * Panel header with title and skip control.
+ * Panel header with collapse toggle and skip control.
  */
-function HeroUpNextHeader({ onSkip, skipTitle }: HeaderProps) {
+function HeroUpNextHeader({
+  isCollapsed,
+  onSkip,
+  onToggleCollapse,
+  skipTitle,
+}: HeaderProps) {
   return (
     <div className="flex items-center justify-between gap-3">
-      <h2 className="text-title-md font-bold text-foreground">Up Next</h2>
+      <button
+        aria-controls={HERO_UP_NEXT_CONTENT_ID}
+        aria-expanded={!isCollapsed}
+        className="flex min-w-0 flex-1 items-center gap-2 rounded-lg text-left focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue"
+        onClick={onToggleCollapse}
+        type="button"
+      >
+        <m.span
+          animate={{ rotate: isCollapsed ? -90 : 0 }}
+          className="grid size-5 shrink-0 place-items-center text-muted-foreground"
+          transition={springSoft}
+        >
+          <CaretDown className="size-3.5" weight="bold" />
+        </m.span>
+        <span className="flex min-w-0 flex-1 flex-col gap-0.5">
+          <span className="text-body-sm font-semibold text-foreground">
+            Up Next
+          </span>
+          {isCollapsed ? (
+            <span className="truncate text-xs text-muted-foreground">
+              {skipTitle}
+            </span>
+          ) : null}
+        </span>
+      </button>
       <button
         aria-label={`Skip to ${skipTitle}`}
-        className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-xs font-semibold text-foreground transition-colors hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue"
+        className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-xs font-semibold text-foreground transition-colors hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue"
         onClick={onSkip}
         type="button"
       >
@@ -100,6 +149,34 @@ function HeroUpNextHeader({ onSkip, skipTitle }: HeaderProps) {
         <SkipForward className="size-3.5" weight="fill" />
       </button>
     </div>
+  )
+}
+
+interface HeroUpNextBodyProps extends BodyProps {
+  /** Whether the queue body is collapsed. */
+  isCollapsed: boolean
+}
+
+/**
+ * Animated expandable body containing the featured show and lineup.
+ */
+function HeroUpNextBody({ entries, isCollapsed, next }: HeroUpNextBodyProps) {
+  return (
+    <m.div
+      animate={{
+        height: isCollapsed ? 0 : "auto",
+        opacity: isCollapsed ? 0 : 1,
+      }}
+      className="overflow-hidden"
+      id={HERO_UP_NEXT_CONTENT_ID}
+      initial={false}
+      transition={springSoft}
+    >
+      <div className="flex flex-col gap-4 pt-4">
+        <HeroUpNextFeatured entry={next} />
+        {entries.length > 0 ? <HeroUpNextLineup entries={entries} /> : null}
+      </div>
+    </m.div>
   )
 }
 
@@ -205,13 +282,15 @@ function HeroUpNextShowMeta({ show }: ShowMetaProps) {
   )
 }
 
-HeroUpNextRoot.Header = HeroUpNextHeader
+HeroUpNextRoot.Body = HeroUpNextBody
 HeroUpNextRoot.Featured = HeroUpNextFeatured
+HeroUpNextRoot.Header = HeroUpNextHeader
 HeroUpNextRoot.Lineup = HeroUpNextLineup
 HeroUpNextRoot.LineupItem = HeroUpNextLineupItem
 HeroUpNextRoot.ShowMeta = HeroUpNextShowMeta
 
 export const HeroUpNext = Object.assign(HeroUpNextRoot, {
+  Body: HeroUpNextBody,
   Featured: HeroUpNextFeatured,
   Header: HeroUpNextHeader,
   Lineup: HeroUpNextLineup,
