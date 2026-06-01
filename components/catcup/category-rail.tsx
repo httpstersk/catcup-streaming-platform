@@ -1,27 +1,29 @@
 "use client"
 
+import { motion } from "motion/react"
 import {
   Bird,
   Bug,
   Crosshair,
   Leaf,
-  LayoutGrid,
-  type LucideIcon,
-} from "lucide-react"
+  SquaresFour,
+  type Icon,
+} from "@phosphor-icons/react"
 
+import { springSoft } from "@/lib/motion"
 import { scrollToCategoryShows } from "@/lib/scroll"
 import { cn } from "@/lib/utils"
 import { usePlayer } from "@/components/catcup/player-provider"
 
 interface RailItem {
   filter: string
-  icon: LucideIcon
+  icon: Icon
   label: string
 }
 
 /** Quick-access category filters rendered as circular icon buttons. */
 const RAIL_ITEMS: RailItem[] = [
-  { filter: "all", icon: LayoutGrid, label: "All" },
+  { filter: "all", icon: SquaresFour, label: "All" },
   { filter: "birds", icon: Bird, label: "Birds" },
   { filter: "bugs", icon: Bug, label: "Bugs" },
   { filter: "chase", icon: Crosshair, label: "Chase" },
@@ -54,11 +56,18 @@ export function CategoryRail() {
                   className={cn(
                     "relative grid size-12 place-items-center rounded-full border transition-colors group-focus-visible:outline-2 group-focus-visible:outline-offset-2 group-focus-visible:outline-blue",
                     isActive
-                      ? "border-transparent bg-blue text-on-blue"
+                      ? "border-transparent text-on-blue"
                       : "border-hairline bg-surface-container text-foreground hover:bg-surface-high"
                   )}
                 >
-                  <item.icon className="size-5" strokeWidth={2} />
+                  {isActive ? (
+                    <motion.span
+                      className="absolute inset-0 rounded-full bg-blue"
+                      layoutId="rail-active"
+                      transition={springSoft}
+                    />
+                  ) : null}
+                  <item.icon className="relative size-5" weight="bold" />
                 </span>
                 <span
                   className={cn(

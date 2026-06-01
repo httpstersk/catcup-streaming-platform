@@ -1,6 +1,7 @@
 "use client"
 
 import * as React from "react"
+import { MotionConfig } from "motion/react"
 
 import {
   durationToSeconds,
@@ -172,7 +173,7 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
   return (
     <PlayerDispatchContext.Provider value={dispatch}>
       <PlayerStateContext.Provider value={stateValue}>
-        {children}
+        <MotionConfig reducedMotion="user">{children}</MotionConfig>
       </PlayerStateContext.Provider>
     </PlayerDispatchContext.Provider>
   )

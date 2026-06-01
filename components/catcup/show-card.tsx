@@ -1,8 +1,10 @@
 "use client"
 
-import { Play, Plus } from "lucide-react"
+import { motion } from "motion/react"
+import { Play, Plus } from "@phosphor-icons/react"
 
 import { cn } from "@/lib/utils"
+import { fadeRiseStagger, springSnappy, springSoft } from "@/lib/motion"
 import { Show } from "@/lib/shows"
 import { usePlayerDispatch } from "@/components/catcup/player-provider"
 import { CategoryBadge } from "@/components/catcup/category-badge"
@@ -12,24 +14,40 @@ interface ShowCardProps {
   className?: string
   /** Renders the larger hero-grid variant with a visible description. */
   featured?: boolean
+  /** Position within its grid, used to stagger the entrance animation. */
+  index?: number
   show: Show
 }
 
 /**
- * Discovery card with a hover-preview trailer, status/category badge, and a
- * title overlay. The `featured` variant fills its grid cell and surfaces the
+ * Discovery card with a hover-preview trailer and a title overlay with the
+ * category pill stacked directly above the title. The `featured` variant fills its grid cell and surfaces the
  * show description, matching the large card in the "More Shows" mock.
  */
-export function ShowCard({ className, featured = false, show }: ShowCardProps) {
+export function ShowCard({
+  className,
+  featured = false,
+  index = 0,
+  show,
+}: ShowCardProps) {
   const dispatch = usePlayerDispatch()
 
   return (
-    <div
+    <motion.div
+      animate="show"
       className={cn(
-        "group relative block overflow-hidden rounded-card border border-hairline bg-surface-low text-left transition-transform duration-200 hover:scale-[1.01] focus-within:scale-[1.01]",
+        "group relative block overflow-hidden rounded-card border border-hairline bg-surface-low text-left",
         featured ? "aspect-video lg:aspect-auto lg:h-full" : "aspect-video",
         className
       )}
+      custom={index}
+      exit="hidden"
+      initial="hidden"
+      layout
+      transition={springSoft}
+      variants={fadeRiseStagger}
+      whileHover={{ scale: 1.02, transition: springSnappy }}
+      whileTap={{ scale: 0.99, transition: springSnappy }}
     >
       <button
         aria-label={`Play ${show.title}`}
@@ -63,17 +81,13 @@ export function ShowCard({ className, featured = false, show }: ShowCardProps) {
         >
           <Play
             className={cn(
-              "translate-x-0.5 fill-current",
+              "translate-x-0.5",
               featured ? "size-10" : "size-8"
             )}
+            weight="fill"
           />
         </span>
       </span>
-
-      <CategoryBadge
-        category={show.category}
-        className="pointer-events-none absolute top-3 left-3"
-      />
 
       <button
         aria-label={`Add ${show.title} to queue`}
@@ -87,21 +101,24 @@ export function ShowCard({ className, featured = false, show }: ShowCardProps) {
         <Plus className="size-4" />
       </button>
 
-      <div className="pointer-events-none absolute right-4 bottom-4 left-4 flex flex-col gap-1">
-        <h4
-          className={cn(
-            "font-bold text-foreground",
-            featured ? "text-headline-lg" : "text-title-md"
-          )}
-        >
-          {show.title}
-        </h4>
+      <div className="pointer-events-none absolute right-4 bottom-4 left-4 flex flex-col gap-2">
+        <div className="flex flex-col gap-1">
+          <CategoryBadge category={show.category} overlay />
+          <h4
+            className={cn(
+              "font-bold text-foreground",
+              featured ? "text-headline-lg" : "text-title-md"
+            )}
+          >
+            {show.title}
+          </h4>
+        </div>
         {featured ? (
           <p className="max-w-md text-body-sm text-foreground/75">
             {show.description}
           </p>
         ) : null}
       </div>
-    </div>
+    </motion.div>
   )
 }

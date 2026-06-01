@@ -4,14 +4,14 @@ import * as React from "react"
 import {
   Bird,
   Bug,
+  CaretDown,
   Cat,
-  ChevronDown,
   Crosshair,
   House,
   Leaf,
-  ListMusic,
-  type LucideIcon,
-} from "lucide-react"
+  Playlist,
+  type Icon,
+} from "@phosphor-icons/react"
 
 import { cn } from "@/lib/utils"
 import { usePlayer } from "@/components/catcup/player-provider"
@@ -20,7 +20,7 @@ import { CatCupLogo, CatCupMark } from "@/components/catcup/logo"
 interface NavItem {
   id: string
   label: string
-  icon: LucideIcon
+  icon: Icon
   filter?: string
 }
 
@@ -30,7 +30,7 @@ const NAV_ITEMS: NavItem[] = [
   { id: "bugs", label: "Bugs", icon: Bug, filter: "bugs" },
   { id: "chase", label: "Chase", icon: Crosshair, filter: "chase" },
   { id: "calm", label: "Calm", icon: Leaf, filter: "calm" },
-  { id: "queue", label: "Queue", icon: ListMusic },
+  { id: "queue", label: "Queue", icon: Playlist },
 ]
 
 export function Sidebar() {
@@ -47,7 +47,7 @@ export function Sidebar() {
         className="flex items-center gap-3 rounded-2xl border border-hairline bg-surface-low/60 p-2.5 text-left transition-colors hover:bg-surface-container"
       >
         <span className="grid size-10 shrink-0 place-items-center rounded-full bg-gradient-to-br from-surface-high to-surface-low ring-2 ring-lime">
-          <Cat className="size-5 text-lime" strokeWidth={2.25} />
+          <Cat className="size-5 text-lime" weight="bold" />
         </span>
         <span className="min-w-0 flex-1">
           <span className="text-body-sm block truncate font-semibold text-foreground">
@@ -57,7 +57,7 @@ export function Sidebar() {
             Curious Explorer
           </span>
         </span>
-        <ChevronDown className="size-4 shrink-0 text-muted-foreground" />
+        <CaretDown className="size-4 shrink-0 text-muted-foreground" />
       </button>
 
       <nav className="flex flex-1 flex-col gap-1">
@@ -81,7 +81,7 @@ export function Sidebar() {
             >
               <item.icon
                 className={cn("size-5 shrink-0", isActive && "text-on-blue")}
-                strokeWidth={2}
+                weight="bold"
               />
               {item.label}
             </button>

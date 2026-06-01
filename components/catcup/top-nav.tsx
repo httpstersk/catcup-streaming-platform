@@ -1,7 +1,9 @@
 "use client"
 
-import { Bell, Cat, Search } from "lucide-react"
+import { motion } from "motion/react"
+import { Bell, Cat, MagnifyingGlass } from "@phosphor-icons/react"
 
+import { springSoft } from "@/lib/motion"
 import { scrollToCategoryShows } from "@/lib/scroll"
 import { cn } from "@/lib/utils"
 import { CatCupLogo } from "@/components/catcup/logo"
@@ -72,7 +74,11 @@ function TopNavLinks() {
           >
             {link.label}
             {isActive ? (
-              <span className="absolute -bottom-1 left-0 h-0.5 w-full rounded-full bg-blue" />
+              <motion.span
+                className="absolute -bottom-1 left-0 h-0.5 w-full rounded-full bg-blue"
+                layoutId="topnav-underline"
+                transition={springSoft}
+              />
             ) : null}
           </button>
         )
@@ -93,7 +99,7 @@ function TopNavActions() {
         className="grid size-9 place-items-center rounded-full text-muted-foreground transition-colors hover:bg-surface-container hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue"
         type="button"
       >
-        <Search className="size-5" strokeWidth={2} />
+        <MagnifyingGlass className="size-5" weight="bold" />
       </button>
 
       <button
@@ -101,7 +107,7 @@ function TopNavActions() {
         className="relative grid size-9 place-items-center rounded-full text-muted-foreground transition-colors hover:bg-surface-container hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue"
         type="button"
       >
-        <Bell className="size-5" strokeWidth={2} />
+        <Bell className="size-5" weight="bold" />
         <span className="absolute top-1.5 right-2 size-2 rounded-full bg-lime ring-2 ring-background" />
       </button>
 
@@ -110,7 +116,7 @@ function TopNavActions() {
         className="ml-1 grid size-9 place-items-center rounded-full bg-linear-to-br from-surface-high to-surface-low ring-2 ring-lime transition-transform hover:scale-105 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue"
         type="button"
       >
-        <Cat className="size-5 text-lime" strokeWidth={2.25} />
+        <Cat className="size-5 text-lime" weight="bold" />
       </button>
     </div>
   )

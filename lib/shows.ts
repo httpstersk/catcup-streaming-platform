@@ -1,31 +1,31 @@
 export type Category = "birds" | "bugs" | "chase" | "calm"
 
 export interface CategoryMeta {
+  badgeClass: string
   id: Category
   label: string
-  badgeClass: string
 }
 
 export const CATEGORY_META: Record<Category, CategoryMeta> = {
   birds: {
+    badgeClass: "bg-blue text-on-blue",
     id: "birds",
     label: "Birds",
-    badgeClass: "bg-blue text-on-blue",
   },
   bugs: {
+    badgeClass: "bg-lime text-on-lime",
     id: "bugs",
     label: "Bugs",
-    badgeClass: "bg-lime text-on-lime",
-  },
-  chase: {
-    id: "chase",
-    label: "Chase",
-    badgeClass: "bg-blue text-on-blue",
   },
   calm: {
+    badgeClass: "bg-olive text-on-olive",
     id: "calm",
     label: "Calm",
-    badgeClass: "bg-olive text-on-olive",
+  },
+  chase: {
+    badgeClass: "bg-blue text-on-blue",
+    id: "chase",
+    label: "Chase",
   },
 }
 

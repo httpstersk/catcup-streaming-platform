@@ -1,7 +1,8 @@
 "use client"
 
 import * as React from "react"
-import { ArrowRight } from "lucide-react"
+import { AnimatePresence } from "motion/react"
+import { ArrowRight } from "@phosphor-icons/react"
 
 import {
   FEATURED_GRID_IDS,
@@ -57,22 +58,32 @@ export function ShowGrid() {
         </p>
       ) : (
         <div className="grid gap-4 lg:min-h-[420px] lg:grid-cols-3">
-          <ShowCard
-            className="lg:col-span-2 lg:row-span-2"
-            featured
-            show={featured}
-          />
-          {stacked.map((show, index) => (
-            <ShowCard key={`${show.id}-${index}`} show={show} />
-          ))}
+          <AnimatePresence mode="popLayout">
+            <ShowCard
+              className="lg:col-span-2 lg:row-span-2"
+              featured
+              index={0}
+              key={featured.id}
+              show={featured}
+            />
+            {stacked.map((show, index) => (
+              <ShowCard index={index + 1} key={show.id} show={show} />
+            ))}
+          </AnimatePresence>
         </div>
       )}
 
       {overflow.length > 0 ? (
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
-          {overflow.map((show, index) => (
-            <ShowCard key={`${show.id}-overflow-${index}`} show={show} />
-          ))}
+          <AnimatePresence mode="popLayout">
+            {overflow.map((show, index) => (
+              <ShowCard
+                index={index + stacked.length + 1}
+                key={show.id}
+                show={show}
+              />
+            ))}
+          </AnimatePresence>
         </div>
       ) : null}
     </section>

@@ -1,6 +1,6 @@
 "use client"
 
-import { Check, ChevronDown } from "lucide-react"
+import { CaretDown, Check } from "@phosphor-icons/react"
 import { Select } from "radix-ui"
 
 import { NAP_TIMER_OPTIONS } from "@/lib/shows"
@@ -25,7 +25,7 @@ export function NapTimer() {
         >
           <Select.Value />
           <Select.Icon>
-            <ChevronDown className="size-4 text-muted-foreground" />
+            <CaretDown className="size-4 text-muted-foreground" />
           </Select.Icon>
         </Select.Trigger>
         <Select.Portal>

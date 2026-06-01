@@ -1,6 +1,6 @@
 "use client"
 
-import { Pause, Play, Plus } from "lucide-react"
+import { Pause, Play, Plus } from "@phosphor-icons/react"
 
 import { cn } from "@/lib/utils"
 import { FEATURED_SHOW } from "@/lib/shows"
@@ -60,9 +60,9 @@ export function Hero() {
               type="button"
             >
               {isActive ? (
-                <Pause className="size-7 fill-current" />
+                <Pause className="size-7" weight="fill" />
               ) : (
-                <Play className="size-7 fill-current" />
+                <Play className="size-7" weight="fill" />
               )}
               {isActive ? "Pause" : "Play Now"}
             </button>

@@ -1,9 +1,19 @@
 "use client"
 
 import * as React from "react"
-import { Play, Pause, Volume2, VolumeX, X, SkipForward, Loader2 } from "lucide-react"
+import { AnimatePresence, motion } from "motion/react"
+import {
+  CircleNotch,
+  Pause,
+  Play,
+  SkipForward,
+  SpeakerHigh,
+  SpeakerX,
+  X,
+} from "@phosphor-icons/react"
 
 import { cn } from "@/lib/utils"
+import { overlayFade, springSoft } from "@/lib/motion"
 import { secondsToLabel, SHOWS_BY_ID } from "@/lib/shows"
 import { usePlayer } from "@/components/catcup/player-provider"
 
@@ -111,9 +121,9 @@ function Controls({
               className="grid size-9 place-items-center rounded-full bg-lime text-on-lime transition-transform hover:scale-105 active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-lime"
             >
               {isPlaying ? (
-                <Pause className="size-4 fill-current" strokeWidth={2.5} />
+                <Pause className="size-4" weight="fill" />
               ) : (
-                <Play className="size-4 translate-x-0.5 fill-current" strokeWidth={2.5} />
+                <Play className="size-4 translate-x-0.5" weight="fill" />
               )}
             </button>
 
@@ -124,7 +134,7 @@ function Controls({
               aria-label="Skip to next show"
               className="grid size-8 place-items-center rounded-full border border-outline-variant bg-surface/30 text-foreground transition-all hover:bg-surface-container hover:text-foreground active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue"
             >
-              <SkipForward className="size-3.5 fill-current" />
+              <SkipForward className="size-3.5" weight="fill" />
             </button>
 
             {/* Mute/Unmute Toggle */}
@@ -135,9 +145,9 @@ function Controls({
               className="grid size-8 place-items-center rounded-full border border-outline-variant bg-surface/30 text-foreground transition-all hover:bg-surface-container hover:text-foreground active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue"
             >
               {isMuted ? (
-                <VolumeX className="size-3.5" />
+                <SpeakerX className="size-3.5" />
               ) : (
-                <Volume2 className="size-3.5" />
+                <SpeakerHigh className="size-3.5" />
               )}
             </button>
 
@@ -244,77 +254,87 @@ export function FullscreenPlayer() {
 
   if (!activeShow) return null
 
-  // Derived values for controls and displays to avoid effect setState loops
-  const displayTime = isFullscreen ? currentTime : 0
   const isControlsVisible = showControls || !isPlaying
 
   return (
-    <div
-      className={cn(
-        "fixed inset-0 z-50 flex flex-col justify-between bg-black transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]",
-        isFullscreen
-          ? "opacity-100 scale-100 pointer-events-auto visible"
-          : "opacity-0 scale-95 pointer-events-none invisible"
-      )}
-    >
-      {/* Video Element */}
-      <video
-        ref={videoRef}
-        src={isFullscreen ? activeShow.trailer : undefined}
-        poster={activeShow.blurDataURL}
-        muted={isMuted}
-        playsInline
-        preload={isFullscreen ? "auto" : "none"}
-        onWaiting={() => setIsBuffering(true)}
-        onPlaying={() => setIsBuffering(false)}
-        onTimeUpdate={(e) => setCurrentTime(e.currentTarget.currentTime)}
-        onLoadedMetadata={(e) => setDuration(e.currentTarget.duration)}
-        onEnded={() => {
-          if (queue.length > 0) {
-            dispatch({ type: "next" })
-          } else {
-            handleClose()
-          }
-        }}
-        className="absolute inset-0 size-full object-cover"
-      />
+    <AnimatePresence>
+      {isFullscreen ? (
+        <motion.div
+          key="fullscreen-player"
+          animate="show"
+          className="fixed inset-0 z-50 flex flex-col justify-between bg-black"
+          exit="hidden"
+          initial="hidden"
+          transition={springSoft}
+          variants={overlayFade}
+        >
+          {/* Video Element */}
+          <video
+            ref={videoRef}
+            src={activeShow.trailer}
+            poster={activeShow.blurDataURL}
+            muted={isMuted}
+            playsInline
+            preload="auto"
+            onWaiting={() => setIsBuffering(true)}
+            onPlaying={() => setIsBuffering(false)}
+            onTimeUpdate={(e) => setCurrentTime(e.currentTarget.currentTime)}
+            onLoadedMetadata={(e) => setDuration(e.currentTarget.duration)}
+            onEnded={() => {
+              if (queue.length > 0) {
+                dispatch({ type: "next" })
+              } else {
+                handleClose()
+              }
+            }}
+            className="absolute inset-0 size-full object-cover"
+          />
 
-      {/* Buffering/Loading Indicator */}
-      {isBuffering && (
-        <div className="absolute inset-0 grid place-items-center bg-black/20 backdrop-blur-xs pointer-events-none">
-          <Loader2 className="size-10 animate-spin text-lime" />
-        </div>
-      )}
+          {/* Buffering/Loading Indicator */}
+          <AnimatePresence>
+            {isBuffering ? (
+              <motion.div
+                animate={{ opacity: 1 }}
+                className="absolute inset-0 grid place-items-center bg-black/20 backdrop-blur-xs pointer-events-none"
+                exit={{ opacity: 0 }}
+                initial={{ opacity: 0 }}
+              >
+                <CircleNotch className="size-10 animate-spin text-lime" />
+              </motion.div>
+            ) : null}
+          </AnimatePresence>
 
-      {/* Close button position overlay (always accessible) */}
-      <div
-        className={cn(
-          "absolute top-6 right-6 z-10 transition-opacity duration-300",
-          isControlsVisible ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
-        )}
-      >
-        <FullscreenPlayer.CloseButton onClose={handleClose} />
-      </div>
+          {/* Close button position overlay (always accessible) */}
+          <div
+            className={cn(
+              "absolute top-6 right-6 z-10 transition-opacity duration-300",
+              isControlsVisible ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
+            )}
+          >
+            <FullscreenPlayer.CloseButton onClose={handleClose} />
+          </div>
 
-      {/* Controls Overlay Layer */}
-      <FullscreenPlayer.Controls
-        currentTime={displayTime}
-        duration={duration}
-        isMuted={isMuted}
-        isPlaying={isPlaying}
-        onMuteToggle={() => setIsMuted((m) => !m)}
-        onPlayToggle={() => dispatch({ type: "togglePlay" })}
-        onSeek={(val) => {
-          if (videoRef.current) {
-            videoRef.current.currentTime = val;
-          }
-          setCurrentTime(val);
-        }}
-        onSkipNext={() => dispatch({ type: "next" })}
-        showControls={isControlsVisible}
-        title={activeShow.title}
-      />
-    </div>
+          {/* Controls Overlay Layer */}
+          <FullscreenPlayer.Controls
+            currentTime={currentTime}
+            duration={duration}
+            isMuted={isMuted}
+            isPlaying={isPlaying}
+            onMuteToggle={() => setIsMuted((m) => !m)}
+            onPlayToggle={() => dispatch({ type: "togglePlay" })}
+            onSeek={(val) => {
+              if (videoRef.current) {
+                videoRef.current.currentTime = val
+              }
+              setCurrentTime(val)
+            }}
+            onSkipNext={() => dispatch({ type: "next" })}
+            showControls={isControlsVisible}
+            title={activeShow.title}
+          />
+        </motion.div>
+      ) : null}
+    </AnimatePresence>
   )
 }
 

@@ -1,8 +1,10 @@
 "use client"
 
 import Image from "next/image"
-import { GripVertical } from "lucide-react"
+import { motion } from "motion/react"
+import { DotsSixVertical } from "@phosphor-icons/react"
 
+import { fadeRise, springSoft } from "@/lib/motion"
 import { QueueEntry, SHOWS_BY_ID } from "@/lib/shows"
 import { usePlayerDispatch } from "@/components/catcup/player-provider"
 import { CategoryBadge } from "@/components/catcup/category-badge"
@@ -12,13 +14,21 @@ export function QueueItem({ entry }: { entry: QueueEntry }) {
   const dispatch = usePlayerDispatch()
 
   return (
-    <div className="group flex items-center gap-2.5 rounded-xl p-1.5 transition-colors hover:bg-surface-low">
+    <motion.div
+      animate="show"
+      className="group flex items-center gap-2.5 rounded-xl p-1.5 transition-colors hover:bg-surface-low"
+      exit="hidden"
+      initial="hidden"
+      layout
+      transition={springSoft}
+      variants={fadeRise}
+    >
       <button
         type="button"
         aria-label="Reorder"
         className="cursor-grab text-subtle/60 transition-colors hover:text-muted-foreground active:cursor-grabbing"
       >
-        <GripVertical className="size-4" />
+        <DotsSixVertical className="size-4" />
       </button>
 
       <button
@@ -47,6 +57,6 @@ export function QueueItem({ entry }: { entry: QueueEntry }) {
       <span className="shrink-0 text-xs text-muted-foreground tabular-nums">
         {show.duration}
       </span>
-    </div>
+    </motion.div>
   )
 }

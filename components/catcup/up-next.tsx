@@ -1,5 +1,7 @@
 "use client"
 
+import { AnimatePresence } from "motion/react"
+
 import { usePlayer } from "@/components/catcup/player-provider"
 import { QueueItem } from "@/components/catcup/queue-item"
 import { PlaybackControls } from "@/components/catcup/playback-controls"
@@ -29,7 +31,11 @@ export function UpNext() {
             Your queue is empty.
           </p>
         ) : (
-          queue.map((entry) => <QueueItem key={entry.key} entry={entry} />)
+          <AnimatePresence initial={false}>
+            {queue.map((entry) => (
+              <QueueItem entry={entry} key={entry.key} />
+            ))}
+          </AnimatePresence>
         )}
       </div>
 

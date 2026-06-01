@@ -8,7 +8,7 @@ import {
   Shuffle,
   SkipBack,
   SkipForward,
-} from "lucide-react"
+} from "@phosphor-icons/react"
 
 import { cn } from "@/lib/utils"
 import { secondsToLabel } from "@/lib/shows"
@@ -82,7 +82,7 @@ export function PlaybackControls() {
           <Shuffle className="size-5" />
         </TransportButton>
         <TransportButton label="Previous">
-          <SkipBack className="size-5 fill-current" />
+          <SkipBack className="size-5" weight="fill" />
         </TransportButton>
 
         <button
@@ -92,14 +92,14 @@ export function PlaybackControls() {
           className="grid size-14 place-items-center rounded-full bg-lime text-on-lime transition-transform hover:scale-105 active:scale-95"
         >
           {isPlaying ? (
-            <Pause className="size-6 fill-current" />
+            <Pause className="size-6" weight="fill" />
           ) : (
-            <Play className="size-6 translate-x-0.5 fill-current" />
+            <Play className="size-6 translate-x-0.5" weight="fill" />
           )}
         </button>
 
         <TransportButton label="Next" onClick={() => dispatch({ type: "next" })}>
-          <SkipForward className="size-5 fill-current" />
+          <SkipForward className="size-5" weight="fill" />
         </TransportButton>
         <TransportButton label="Repeat">
           <Repeat className="size-5" />

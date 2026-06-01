@@ -1,7 +1,9 @@
 "use client"
 
-import { Search } from "lucide-react"
+import { motion } from "motion/react"
+import { MagnifyingGlass } from "@phosphor-icons/react"
 
+import { springSoft } from "@/lib/motion"
 import { cn } from "@/lib/utils"
 import { FILTERS } from "@/lib/shows"
 import { usePlayer } from "@/components/catcup/player-provider"
@@ -21,20 +23,27 @@ export function FilterChips() {
               onClick={() => dispatch({ type: "setFilter", value: filter.id })}
               aria-pressed={isActive}
               className={cn(
-                "shrink-0 rounded-full border px-4 py-1.5 text-body-sm font-semibold transition-colors",
+                "relative shrink-0 rounded-full border px-4 py-1.5 text-body-sm font-semibold transition-colors",
                 isActive
-                  ? "border-blue/70 bg-blue/15 text-blue-soft"
+                  ? "border-transparent text-blue-soft"
                   : "border-hairline bg-surface-low text-muted-foreground hover:border-outline-variant hover:text-foreground"
               )}
             >
-              {filter.label}
+              {isActive ? (
+                <motion.span
+                  className="absolute inset-0 rounded-full border border-blue/70 bg-blue/15"
+                  layoutId="filter-pill"
+                  transition={springSoft}
+                />
+              ) : null}
+              <span className="relative">{filter.label}</span>
             </button>
           )
         })}
       </div>
 
       <label className="relative shrink-0 lg:w-64">
-        <Search className="pointer-events-none absolute top-1/2 left-3.5 size-4 -translate-y-1/2 text-muted-foreground" />
+        <MagnifyingGlass className="pointer-events-none absolute top-1/2 left-3.5 size-4 -translate-y-1/2 text-muted-foreground" />
         <input
           type="search"
           value={search}
