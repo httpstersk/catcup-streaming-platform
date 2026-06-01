@@ -32,12 +32,7 @@ export function ShowGrid() {
     }
 
     return SHOWS.filter((show) => {
-      if (activeFilter === "live" && !show.isLive) return false
-      if (
-        activeFilter !== "all" &&
-        activeFilter !== "live" &&
-        show.category !== activeFilter
-      ) {
+      if (activeFilter !== "all" && show.category !== activeFilter) {
         return false
       }
       if (query && !show.title.toLowerCase().includes(query)) return false

@@ -4,7 +4,7 @@ import { Plus } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 import { Show } from "@/lib/shows"
-import { usePlayer } from "@/components/catcup/player-provider"
+import { usePlayerDispatch } from "@/components/catcup/player-provider"
 import { CategoryBadge } from "@/components/catcup/category-badge"
 import { TrailerMedia } from "@/components/catcup/trailer-media"
 
@@ -21,7 +21,7 @@ interface ShowCardProps {
  * show description, matching the large card in the "More Shows" mock.
  */
 export function ShowCard({ className, featured = false, show }: ShowCardProps) {
-  const { dispatch } = usePlayer()
+  const dispatch = usePlayerDispatch()
 
   return (
     <div
@@ -51,17 +51,10 @@ export function ShowCard({ className, featured = false, show }: ShowCardProps) {
 
       <span className="pointer-events-none absolute inset-0 bg-linear-to-t from-black/80 via-black/10 to-transparent" />
 
-      {show.isLive ? (
-        <span className="pointer-events-none absolute top-3 left-3 inline-flex items-center gap-1.5 rounded-md bg-lime px-2 py-1 text-label-bold text-on-lime">
-          <span className="size-1.5 animate-pulse rounded-full bg-on-lime" />
-          Live
-        </span>
-      ) : (
-        <CategoryBadge
-          category={show.category}
-          className="pointer-events-none absolute top-3 left-3"
-        />
-      )}
+      <CategoryBadge
+        category={show.category}
+        className="pointer-events-none absolute top-3 left-3"
+      />
 
       <button
         aria-label={`Add ${show.title} to queue`}
@@ -79,7 +72,7 @@ export function ShowCard({ className, featured = false, show }: ShowCardProps) {
         <h4
           className={cn(
             "font-bold text-foreground",
-            featured ? "text-title-md" : "text-body-lg"
+            featured ? "text-headline-lg" : "text-title-md"
           )}
         >
           {show.title}

@@ -10,7 +10,6 @@ import {
   House,
   Leaf,
   ListMusic,
-  Radio,
   type LucideIcon,
 } from "lucide-react"
 
@@ -27,7 +26,6 @@ interface NavItem {
 
 const NAV_ITEMS: NavItem[] = [
   { id: "for-you", label: "For You", icon: House, filter: "all" },
-  { id: "live", label: "Live", icon: Radio, filter: "live" },
   { id: "birds", label: "Birds", icon: Bird, filter: "birds" },
   { id: "bugs", label: "Bugs", icon: Bug, filter: "bugs" },
   { id: "chase", label: "Chase", icon: Crosshair, filter: "chase" },

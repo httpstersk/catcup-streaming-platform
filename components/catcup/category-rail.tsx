@@ -6,7 +6,6 @@ import {
   Crosshair,
   Leaf,
   LayoutGrid,
-  Radio,
   type LucideIcon,
 } from "lucide-react"
 
@@ -17,17 +16,12 @@ import { usePlayer } from "@/components/catcup/player-provider"
 interface RailItem {
   filter: string
   icon: LucideIcon
-  isLive?: boolean
   label: string
 }
 
-/**
- * Quick-access category filters rendered as circular icon buttons, mirroring
- * the homepage mock. `Live` carries a pulsing lime status dot.
- */
+/** Quick-access category filters rendered as circular icon buttons. */
 const RAIL_ITEMS: RailItem[] = [
   { filter: "all", icon: LayoutGrid, label: "All" },
-  { filter: "live", icon: Radio, isLive: true, label: "Live" },
   { filter: "birds", icon: Bird, label: "Birds" },
   { filter: "bugs", icon: Bug, label: "Bugs" },
   { filter: "chase", icon: Crosshair, label: "Chase" },
@@ -65,9 +59,6 @@ export function CategoryRail() {
                   )}
                 >
                   <item.icon className="size-5" strokeWidth={2} />
-                  {item.isLive ? (
-                    <span className="absolute top-0 right-0 size-2.5 animate-pulse rounded-full bg-lime ring-2 ring-background" />
-                  ) : null}
                 </span>
                 <span
                   className={cn(

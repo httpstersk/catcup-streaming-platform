@@ -128,12 +128,29 @@ function reducer(state: PlayerState, action: PlayerAction): PlayerState {
   }
 }
 
-interface PlayerContextValue extends PlayerState {
-  dispatch: React.Dispatch<PlayerAction>
+/**
+ * The read side of the player context: reactive state plus derived values.
+ */
+interface PlayerStateValue extends PlayerState {
   totalQueueSeconds: number
 }
 
-const PlayerContext = React.createContext<PlayerContextValue | null>(null)
+/**
+ * The combined value returned by {@link usePlayer}, pairing reactive state with
+ * the stable dispatch function for backwards compatibility.
+ */
+interface PlayerContextValue extends PlayerStateValue {
+  dispatch: React.Dispatch<PlayerAction>
+}
+
+/**
+ * State and dispatch live in separate contexts so dispatch-only consumers (e.g.
+ * `ShowCard`) do not re-render when reactive state such as the active filter
+ * changes.
+ */
+const PlayerDispatchContext =
+  React.createContext<React.Dispatch<PlayerAction> | null>(null)
+const PlayerStateContext = React.createContext<PlayerStateValue | null>(null)
 
 export function PlayerProvider({ children }: { children: React.ReactNode }) {
   const [state, dispatch] = React.useReducer(reducer, initialState)
@@ -147,18 +164,37 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
     )
   }, [state.queue, state.nowPlayingId])
 
-  const value = React.useMemo<PlayerContextValue>(
-    () => ({ ...state, dispatch, totalQueueSeconds }),
+  const stateValue = React.useMemo<PlayerStateValue>(
+    () => ({ ...state, totalQueueSeconds }),
     [state, totalQueueSeconds]
   )
 
-  return <PlayerContext.Provider value={value}>{children}</PlayerContext.Provider>
+  return (
+    <PlayerDispatchContext.Provider value={dispatch}>
+      <PlayerStateContext.Provider value={stateValue}>
+        {children}
+      </PlayerStateContext.Provider>
+    </PlayerDispatchContext.Provider>
+  )
 }
 
-export function usePlayer() {
-  const ctx = React.useContext(PlayerContext)
-  if (!ctx) {
+/**
+ * Returns the stable player dispatch function. Prefer this over {@link usePlayer}
+ * for components that only trigger actions, to avoid re-rendering on state changes.
+ */
+export function usePlayerDispatch(): React.Dispatch<PlayerAction> {
+  const dispatch = React.useContext(PlayerDispatchContext)
+  if (!dispatch) {
+    throw new Error("usePlayerDispatch must be used within a PlayerProvider")
+  }
+  return dispatch
+}
+
+export function usePlayer(): PlayerContextValue {
+  const state = React.useContext(PlayerStateContext)
+  const dispatch = React.useContext(PlayerDispatchContext)
+  if (!state || !dispatch) {
     throw new Error("usePlayer must be used within a PlayerProvider")
   }
-  return ctx
+  return { ...state, dispatch }
 }

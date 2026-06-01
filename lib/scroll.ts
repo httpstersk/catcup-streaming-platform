@@ -2,7 +2,7 @@ import { isCategory, MORE_SHOWS_SECTION_ID } from "@/lib/shows"
 
 /**
  * Smoothly scrolls to the "More Shows" section when a specific category is
- * selected. No-ops for non-category filters ("all"/"live") or during SSR.
+ * selected. No-ops for non-category filters ("all") or during SSR.
  *
  * @param filter - The filter value chosen by the user.
  */

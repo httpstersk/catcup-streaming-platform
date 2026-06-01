@@ -3,8 +3,9 @@
 import { Pause, Play, Plus } from "lucide-react"
 
 import { cn } from "@/lib/utils"
-import { CATEGORY_META, FEATURED_SHOW } from "@/lib/shows"
+import { FEATURED_SHOW } from "@/lib/shows"
 import { usePlayer } from "@/components/catcup/player-provider"
+import { CategoryBadge } from "@/components/catcup/category-badge"
 import { HeroUpNext } from "@/components/catcup/hero-up-next"
 import { TrailerMedia } from "@/components/catcup/trailer-media"
 
@@ -37,21 +38,11 @@ export function Hero() {
       <div className="absolute inset-0 bg-linear-to-r from-background via-background/55 to-transparent" />
       <div className="absolute inset-0 bg-linear-to-t from-background via-background/30 to-transparent" />
 
-      <div className="relative flex min-h-[82svh] flex-col justify-end px-4 pt-24 pb-10 sm:px-6 lg:px-10 lg:pb-14">
+      <div className="relative mx-auto flex min-h-[82svh] w-full max-w-[1440px] flex-col justify-end px-4 pt-24 pb-10 sm:px-6 lg:px-10 lg:pb-14">
         <div className="flex flex-col items-start gap-4 lg:max-w-xl">
-          <div className="flex flex-wrap items-center gap-2">
-            {show.isLive ? (
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-lime px-2.5 py-1 text-label-bold text-on-lime">
-                <span className="size-1.5 animate-pulse rounded-full bg-on-lime" />
-                Live
-              </span>
-            ) : null}
-            <span className="inline-flex items-center rounded-md bg-black/40 px-2.5 py-1 text-label-bold text-foreground backdrop-blur-md">
-              {CATEGORY_META[show.category].label}
-            </span>
-          </div>
+          <CategoryBadge category={show.category} />
 
-          <h1 className="text-display-lg text-foreground">{show.title}</h1>
+          <h1 className="text-display-xl text-foreground">{show.title}</h1>
 
           <p className="max-w-md text-body-sm text-muted-foreground">
             {show.description}

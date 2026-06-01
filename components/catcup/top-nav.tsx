@@ -5,7 +5,7 @@ import { Bell, Cat, Search } from "lucide-react"
 import { scrollToCategoryShows } from "@/lib/scroll"
 import { cn } from "@/lib/utils"
 import { CatCupLogo } from "@/components/catcup/logo"
-import { usePlayer } from "@/components/catcup/player-provider"
+import { usePlayer, usePlayerDispatch } from "@/components/catcup/player-provider"
 
 interface NavLink {
   filter: string
@@ -19,7 +19,6 @@ interface NavLink {
  */
 const NAV_LINKS: NavLink[] = [
   { filter: "all", id: "home", label: "Home" },
-  { filter: "live", id: "live", label: "Live Now" },
   { filter: "birds", id: "birds", label: "Birds" },
   { filter: "bugs", id: "bugs", label: "Bugs" },
   { filter: "chase", id: "chase", label: "Chase" },
@@ -30,7 +29,7 @@ const NAV_LINKS: NavLink[] = [
  * Brand wordmark that returns the user to the personalized home feed.
  */
 function TopNavBrand() {
-  const { dispatch } = usePlayer()
+  const dispatch = usePlayerDispatch()
 
   return (
     <button

@@ -68,6 +68,12 @@
 }
 
 @layer components {
+  .text-display-xl {
+    font-size: 64px;
+    font-weight: 700;
+    line-height: 68px;
+    letter-spacing: -0.02em;
+  }
   .text-display-lg {
     font-size: 48px;
     font-weight: 700;
@@ -99,6 +105,13 @@
     font-size: 12px;
     font-weight: 700;
     line-height: 16px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+  .text-label-sm {
+    font-size: 10px;
+    font-weight: 700;
+    line-height: 14px;
     letter-spacing: 0.05em;
     text-transform: uppercase;
   }

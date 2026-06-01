@@ -260,10 +260,11 @@ export function FullscreenPlayer() {
       {/* Video Element */}
       <video
         ref={videoRef}
-        src={activeShow.trailer}
+        src={isFullscreen ? activeShow.trailer : undefined}
+        poster={activeShow.blurDataURL}
         muted={isMuted}
         playsInline
-        preload="auto"
+        preload={isFullscreen ? "auto" : "none"}
         onWaiting={() => setIsBuffering(true)}
         onPlaying={() => setIsBuffering(false)}
         onTimeUpdate={(e) => setCurrentTime(e.currentTarget.currentTime)}

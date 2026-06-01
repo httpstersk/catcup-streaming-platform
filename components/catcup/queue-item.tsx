@@ -4,12 +4,12 @@ import Image from "next/image"
 import { GripVertical } from "lucide-react"
 
 import { QueueEntry, SHOWS_BY_ID } from "@/lib/shows"
-import { usePlayer } from "@/components/catcup/player-provider"
+import { usePlayerDispatch } from "@/components/catcup/player-provider"
 import { CategoryBadge } from "@/components/catcup/category-badge"
 
 export function QueueItem({ entry }: { entry: QueueEntry }) {
   const show = SHOWS_BY_ID[entry.showId]
-  const { dispatch } = usePlayer()
+  const dispatch = usePlayerDispatch()
 
   return (
     <div className="group flex items-center gap-2.5 rounded-xl p-1.5 transition-colors hover:bg-surface-low">
@@ -31,6 +31,8 @@ export function QueueItem({ entry }: { entry: QueueEntry }) {
           alt={show.title}
           fill
           sizes="80px"
+          placeholder="blur"
+          blurDataURL={show.blurDataURL}
           className="object-cover"
         />
       </button>
