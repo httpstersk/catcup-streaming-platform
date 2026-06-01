@@ -16,9 +16,9 @@ export default function Page() {
     <PlayerProvider>
       <div className="relative min-h-svh w-full bg-background">
         <TopNav />
+        <StickyHeroUpNext />
         <main className="relative flex flex-col gap-10 pb-16">
           <Hero />
-          <StickyHeroUpNext />
           <div className="mx-auto flex w-full max-w-[1440px] flex-col gap-10 px-4 sm:px-6 lg:px-10">
             <CategoryRail />
             <ShowGrid />

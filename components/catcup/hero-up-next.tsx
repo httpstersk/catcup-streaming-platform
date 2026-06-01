@@ -7,23 +7,23 @@ import { SkipForward } from "@phosphor-icons/react"
 import { fadeRise, springSoft } from "@/lib/motion"
 import { SHOWS_BY_ID } from "@/lib/shows"
 import { usePlayer } from "@/components/catcup/player-provider"
-import { TrailerMedia } from "@/components/catcup/trailer-media"
+import { QueueItem } from "@/components/catcup/queue-item"
 
 /**
- * Compact, glassy "Up Next" preview for the hero. Shows the first queued show
- * with its runtime and a skip-to-next control. Animates in and out so the hero
- * stays uncluttered while the queue is empty.
+ * Glassy "Up Next" panel listing every queued show with a skip-to-next control.
+ * Animates in and out so the hero stays uncluttered while the queue is empty.
  */
 export function HeroUpNext() {
   const { dispatch, queue } = usePlayer()
   const next = queue[0]
-  const show = next ? SHOWS_BY_ID[next.showId] : undefined
+  const nextShow = next ? SHOWS_BY_ID[next.showId] : undefined
 
   return (
     <AnimatePresence>
-      {next && show ? (
-        <m.div
+      {queue.length > 0 ? (
+        <m.aside
           animate="show"
+          aria-label="Up next queue"
           className="flex flex-col gap-3 rounded-card border border-white/10 bg-surface-lowest/70 p-3.5 backdrop-blur-xl"
           exit="hidden"
           initial="hidden"
@@ -35,37 +35,26 @@ export function HeroUpNext() {
             <span className="text-body-sm font-semibold text-foreground">
               Up Next
             </span>
-            <button
-              aria-label={`Skip to ${show.title}`}
-              className="grid size-7 place-items-center rounded-full text-muted-foreground transition-colors hover:bg-surface-container hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue"
-              onClick={() => dispatch({ type: "next" })}
-              type="button"
-            >
-              <SkipForward className="size-4" weight="fill" />
-            </button>
+            {nextShow ? (
+              <button
+                aria-label={`Skip to ${nextShow.title}`}
+                className="grid size-7 place-items-center rounded-full text-muted-foreground transition-colors hover:bg-surface-container hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue"
+                onClick={() => dispatch({ type: "next" })}
+                type="button"
+              >
+                <SkipForward className="size-4" weight="fill" />
+              </button>
+            ) : null}
           </div>
 
-          <button
-            className="group flex items-center gap-3 rounded-lg text-left focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue"
-            onClick={() => dispatch({ type: "play", showId: show.id })}
-            type="button"
-          >
-            <TrailerMedia
-              className="aspect-video w-[88px] shrink-0 rounded-md"
-              previewOnHover={false}
-              show={show}
-              sizes="88px"
-            />
-            <span className="min-w-0 flex-1">
-              <span className="block truncate text-xs text-muted-foreground">
-                Coming up &middot; {show.duration}
-              </span>
-              <span className="block truncate text-body-sm font-semibold text-foreground">
-                {show.title}
-              </span>
-            </span>
-          </button>
-        </m.div>
+          <ul className="flex flex-col gap-2">
+            <AnimatePresence initial={false}>
+              {queue.map((entry, index) => (
+                <QueueItem entry={entry} isNext={index === 0} key={entry.key} />
+              ))}
+            </AnimatePresence>
+          </ul>
+        </m.aside>
       ) : null}
     </AnimatePresence>
   )

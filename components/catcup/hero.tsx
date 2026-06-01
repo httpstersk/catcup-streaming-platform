@@ -12,8 +12,8 @@ import { TrailerMedia } from "@/components/catcup/trailer-media"
 /**
  * Full-bleed cinematic hero for the featured show. The trailer plays behind a
  * directional scrim while the title, status badges, and primary actions sit on
- * the lower-left, matching the homepage mock. The `StickyHeroUpNext` card previews
- * the next queued show and sticks below the top navigation bar while scrolling.
+ * the lower-left, matching the homepage mock. On desktop, `StickyHeroUpNext`
+ * absolutely positions the full queue panel at the bottom-right of the viewport.
  */
 export function Hero() {
   const { dispatch, isFullscreen, isPlaying, nowPlayingId } = usePlayer()
@@ -77,7 +77,7 @@ export function Hero() {
           </div>
         </div>
 
-        <div className="sticky top-16 z-20 w-full max-w-sm lg:hidden">
+        <div className="z-20 w-full max-w-sm lg:hidden">
           <HeroUpNext />
         </div>
       </div>
