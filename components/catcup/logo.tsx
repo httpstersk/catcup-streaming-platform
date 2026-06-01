@@ -31,15 +31,9 @@ function CatCupMark({ className }: { className?: string }) {
 /** Full CatCup logo lockup with mark and wordmark. */
 export function CatCupLogo({ className }: { className?: string }) {
   return (
-    <div className={cn("flex items-center gap-2", className)}>
-      <CatCupMark className="size-9" />
-      <span
-        className={cn(
-          "text-4xl text-title-md font-bold tracking-tight text-foreground"
-        )}
-      >
-        CatCup
-      </span>
+    <div className={cn("flex items-center gap-1.5 text-lime", className)}>
+      <CatCupMark className="size-6" />
+      <span className="text-title-md font-bold tracking-tight">CatCup</span>
     </div>
   )
 }
